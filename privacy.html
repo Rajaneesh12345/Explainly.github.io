@@ -50,7 +50,7 @@
 
 <div class="legal">
   <h1>Privacy Policy</h1>
-  <span class="updated">Last updated: 22 May 2025</span>
+  <span class="updated">Last updated: 29 May 2025</span>
 
   <div class="highlight-box">
     <strong>Privacy summary:</strong> Explainly does not log or store the text you select on any server. No browsing history or page URLs are stored server-side. Anonymous users send only selected text to the AI backend for processing — this text is never saved.
@@ -75,7 +75,7 @@
     <li><strong>Email address:</strong> Stored in our Supabase database to identify your account and track usage limits.</li>
     <li><strong>Google OAuth ID:</strong> The Supabase user ID linked to your Google account (used for authentication only).</li>
     <li><strong>Daily usage counts:</strong> How many explanations you have requested today (general, Deep mode, Why? mode) — stored to enforce free-tier limits and display your usage bar.</li>
-    <li><strong>Subscription tier:</strong> Whether your account is "free" or "pro" — stored to determine your access level.</li>
+    <li><strong>Subscription tier:</strong> Whether your account is "free", "pro", or "premium" — stored to determine your access level and usage limits.</li>
     <li><strong>Selected text:</strong> Still not stored unless you explicitly save an explanation (see Section 1.3).</li>
   </ul>
 
@@ -84,7 +84,7 @@
   <ul>
     <li>The selected text, AI-generated explanation, mode, source page URL, source domain, and page title are stored in Supabase under your account.</li>
     <li>These saves are private to your account and are not shared with any third parties.</li>
-    <li>Free accounts are limited to 50 cloud saves. Pro accounts have higher limits.</li>
+    <li>Cloud saves require a Pro or Premium subscription. Free users can use "Local" saves mode, which stores explanations only on your device and never on our servers. Pro and Premium accounts can store up to their plan limit in Supabase.</li>
     <li>You can delete any saved explanation at any time from the Library.</li>
   </ul>
 
@@ -101,7 +101,7 @@
   <ul>
     <li><strong>To provide the Service:</strong> Sending selected text to AI providers to generate explanations.</li>
     <li><strong>To manage accounts:</strong> Storing your email and usage counts to enforce tier limits and display your account dashboard.</li>
-    <li><strong>To process payments:</strong> Passing payment verification to our payment processor (Paddle) to upgrade your account to Pro.</li>
+    <li><strong>To process payments:</strong> Passing payment verification to our payment processors — Paddle (international) and Razorpay (India) — to upgrade your account.</li>
     <li><strong>To improve the Service:</strong> Aggregate, anonymised analytics events (e.g., mode usage, error rates, provider performance) to understand how the extension is used and fix issues.</li>
     <li><strong>To communicate with you:</strong> We may use your email to send important account-related notices (not for marketing unless you opt in).</li>
   </ul>
@@ -114,13 +114,14 @@
     <li><strong>Supabase</strong> — Database and authentication. Your email, usage counts, and cloud saves (if enabled) are stored here. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Supabase's Privacy Policy</a>.</li>
     <li><strong>Google OAuth</strong> — Used for sign-in. No passwords are handled by Explainly. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</li>
     <li><strong>Paddle</strong> — Payment processor (Merchant of Record). Handles subscription payments, refunds, and tax. Explainly does not store your card details. See <a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noopener">Paddle's Privacy Policy</a>.</li>
+    <li><strong>Razorpay</strong> — Payment processor for Indian users (UPI, cards, net banking). Handles subscription payments for users in India. Explainly does not store your card or UPI details. See <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener">Razorpay's Privacy Policy</a>.</li>
     <li><strong>dictionaryapi.dev</strong> — Free public dictionary API used for single-word Normal-mode lookups. No personal data is sent.</li>
     <li><strong>Vercel</strong> — Hosts the Explainly backend API. See <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Vercel's Privacy Policy</a>.</li>
   </ul>
 
   <h2>4. Data Retention</h2>
   <ul>
-    <li><strong>Analytics events</strong> are automatically deleted after 90 days.</li>
+    <li><strong>Analytics events</strong> are periodically reviewed and deleted. We aim to retain raw event data for no longer than 90 days.</li>
     <li><strong>Cloud saves</strong> are retained until you delete them or delete your account.</li>
     <li><strong>Usage counts</strong> are reset daily (at midnight UTC).</li>
     <li><strong>Account data</strong> (email, tier, usage) is retained while your account is active.</li>
@@ -146,7 +147,7 @@
     <li>Authentication tokens are stored in <code>chrome.storage.local</code>, which is encrypted at rest by Chrome on supported platforms.</li>
     <li>All communication between the extension and our servers uses HTTPS.</li>
     <li>Supabase Row Level Security ensures users can only access their own saved explanations.</li>
-    <li>We do not store payment card details — all payment processing is handled by Paddle.</li>
+    <li>We do not store payment card or UPI details — all payment processing is handled by Paddle (international) or Razorpay (India).</li>
   </ul>
 
   <h2>8. Changes to This Policy</h2>
