@@ -1,165 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent="indigo" data-font="techy" data-card="elevated" data-radius="rounded">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/icons/icon-192.png" type="image/png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Library — Explainly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/app.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#1e1e2e" />
+  <meta name="theme-color" content="#06070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
 </head>
 <body>
+<canvas id="starfield"></canvas>
+<div class="bg-aura"></div>
 
-<nav class="app-nav">
-  <a href="/" class="nav-logo"><span>Explain</span>ly</a>
-  <span class="nav-title">Library</span>
-  <a href="/app/account.html" class="nav-avatar" id="nav-avatar">?</a>
-</nav>
+<div class="app-shell" id="app-shell">
 
-<main class="app-main">
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="side-brand">
+      <img class="brand-logo" src="/icons/logo-indigo.png" alt="" />
+      <span><span class="lite">Explain</span>ly</span>
+    </div>
+    <nav class="side-nav">
+      <a class="side-link active" href="/app/library.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16l-8-4-8 4V5Z"/></svg>
+        <span>Library</span><span class="badge" id="side-saves-count">—</span>
+      </a>
+      <a class="side-link" href="/app/account.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Account</span>
+      </a>
+      <a class="side-link" href="/app/upgrade.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m12 2 2.39 6.96L21.6 9.2l-5.3 4.61 1.7 7.19L12 17.27 5.99 21l1.7-7.19L2.4 9.2l7.21-.24L12 2Z"/></svg>
+        <span>Upgrade</span>
+      </a>
+    </nav>
+    <div class="side-foot">
+      <button class="theme-btn" id="theme-side" aria-label="Toggle theme" style="align-self:flex-start">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <a class="side-account" href="/app/account.html">
+        <span class="avatar" id="side-avatar">?</span>
+        <span class="who"><b id="side-name">—</b><span id="side-email">—</span></span>
+      </a>
+    </div>
+  </aside>
 
-  <!-- Search -->
-  <div class="search-wrap">
-    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-    </svg>
-    <input id="search-input" class="search-input" type="search" placeholder="Search saves…" autocomplete="off" />
-    <button id="search-clear" class="search-clear" onclick="clearSearch()" aria-label="Clear search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  <!-- Top bar (mobile) -->
+  <header class="topbar">
+    <a class="brand" href="/app/library.html">
+      <img class="brand-logo" src="/icons/logo-indigo.png" alt="" />
+      <span><span class="lite">Explain</span>ly</span>
+    </a>
+    <span class="spacer"></span>
+    <button class="theme-btn" id="theme-top" aria-label="Toggle theme">
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     </button>
-  </div>
+    <a class="avatar" id="top-avatar" href="/app/account.html" style="width:38px;height:38px;font-size:15px">?</a>
+  </header>
 
-  <!-- Filter chips -->
-  <div class="filter-chips" id="filter-chips">
-    <button class="chip active" data-mode="all"    onclick="setFilter(this)">All</button>
-    <button class="chip"        data-mode="eli5"   onclick="setFilter(this)">ELI5</button>
-    <button class="chip"        data-mode="normal" onclick="setFilter(this)">Normal</button>
-    <button class="chip"        data-mode="deep"   onclick="setFilter(this)">Deep</button>
-    <button class="chip"        data-mode="why"    onclick="setFilter(this)">Why?</button>
-  </div>
+  <main class="app-content">
+    <section class="page active" id="page-library">
 
-  <!-- List -->
-  <div id="saves-list"></div>
+      <div class="page-head">
+        <span class="eyebrow">Your saves</span>
+        <h1 class="page-title">Library</h1>
+        <p class="page-sub">Every explanation you've saved — searchable and sorted.</p>
+      </div>
 
-  <!-- Load more -->
-  <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
-    <button class="btn btn-outline" onclick="loadMore()" id="load-more-btn">Load more</button>
-  </div>
+      <div class="lib-bar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input class="search-input" id="search" type="search" placeholder="Search saves, sources…" autocomplete="off" />
+        </div>
+        <div class="select-wrap">
+          <select id="sort">
+            <option value="recent">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="az">Title A–Z</option>
+          </select>
+        </div>
+        <div class="view-toggle" id="view-toggle">
+          <button data-view="list" class="on" aria-label="List view">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+          <button data-view="grid" aria-label="Grid view">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </button>
+        </div>
+      </div>
 
-</main>
+      <div class="chips" id="mode-chips">
+        <button class="chip active" data-mode="all">All</button>
+        <button class="chip" data-mode="eli5">ELI5</button>
+        <button class="chip" data-mode="normal">Normal</button>
+        <button class="chip" data-mode="deep">Deep</button>
+        <button class="chip" data-mode="why">Why?</button>
+      </div>
 
-<nav class="tab-bar">
-  <a href="/app/library.html" class="tab-item active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-    <span>Library</span>
-  </a>
-  <a href="/app/account.html" class="tab-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span>Account</span>
-  </a>
-  <a href="/app/upgrade.html" class="tab-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-    <span>Upgrade</span>
-  </a>
-</nav>
+      <div class="saves" id="saves-list"></div>
 
-<!-- Toast -->
+      <div id="load-more-wrap" style="display:none;text-align:center;padding-top:20px;">
+        <button class="btn btn-ghost" id="load-more-btn">Load more</button>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Tab bar (mobile) -->
+  <nav class="tabbar">
+    <a class="tab-item active" href="/app/library.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16l-8-4-8 4V5Z"/></svg>
+      <span>Library</span>
+    </a>
+    <a class="tab-item" href="/app/account.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Account</span>
+    </a>
+    <a class="tab-item" href="/app/upgrade.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m12 2 2.39 6.96L21.6 9.2l-5.3 4.61 1.7 7.19L12 17.27 5.99 21l1.7-7.19L2.4 9.2l7.21-.24L12 2Z"/></svg>
+      <span>Upgrade</span>
+    </a>
+  </nav>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="/js/config.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/app-shell.js"></script>
 <script>
   if (!requireAuth()) throw new Error('redirect');
 
-  // Set avatar initial
-  document.getElementById('nav-avatar').textContent = getAvatarInitial();
+  var _saves    = [];
+  var _filter   = 'all';
+  var _search   = '';
+  var _sort     = 'recent';
+  var _view     = 'list';
+  var _offset   = 0;
+  var _limit    = 30;
+  var _hasMore  = false;
+  var _open     = {};
+  var _debounce = null;
 
-  var _saves     = [];
-  var _filter    = 'all';
-  var _search    = '';
-  var _offset    = 0;
-  var _limit     = 30;
-  var _hasMore   = false;
-  var _debounce  = null;
-  var _expanded  = {};
+  var MODE_LABELS = { eli5: 'ELI5', normal: 'Normal', deep: 'Deep', why: 'Why?' };
 
   // ── Boot ──────────────────────────────────────────────
   showSkeletons();
   loadSaves(0);
 
-  document.getElementById('search-input').addEventListener('input', function() {
+  // ── Search ────────────────────────────────────────────
+  document.getElementById('search').addEventListener('input', function () {
     var val = this.value;
-    document.getElementById('search-clear').classList.toggle('visible', val.length > 0);
     clearTimeout(_debounce);
-    _debounce = setTimeout(function() {
+    _debounce = setTimeout(function () {
       _search = val.trim().toLowerCase();
       render();
-    }, 300);
+    }, 280);
+  });
+
+  // ── Sort ──────────────────────────────────────────────
+  document.getElementById('sort').addEventListener('change', function () {
+    _sort = this.value;
+    render();
+  });
+
+  // ── Mode chips ────────────────────────────────────────
+  document.getElementById('mode-chips').addEventListener('click', function (e) {
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll('#mode-chips .chip').forEach(function (c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+    _filter = chip.dataset.mode;
+    render();
+  });
+
+  // ── View toggle ───────────────────────────────────────
+  document.getElementById('view-toggle').addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#view-toggle button').forEach(function (b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    _view = btn.dataset.view;
+    document.getElementById('saves-list').classList.toggle('grid', _view === 'grid');
   });
 
   // ── Data ──────────────────────────────────────────────
   function loadSaves(offset) {
     fetchSaves(offset, _limit + 1)
-      .then(function(data) {
+      .then(function (data) {
         if (!Array.isArray(data)) data = [];
         _hasMore = data.length > _limit;
         var batch = data.slice(0, _limit);
         if (offset === 0) {
-          _saves  = batch;
+          _saves = batch;
           _offset = _limit;
         } else {
-          _saves  = _saves.concat(batch);
+          _saves = _saves.concat(batch);
           _offset = _saves.length;
         }
+        var countEl = document.getElementById('side-saves-count');
+        if (countEl) countEl.textContent = _saves.length;
         render();
       })
-      .catch(function() {
-        showError();
-      });
+      .catch(function () { showError(); });
   }
 
-  function loadMore() {
-    document.getElementById('load-more-btn').disabled = true;
+  document.getElementById('load-more-btn').addEventListener('click', function () {
+    this.disabled = true;
     loadSaves(_offset);
-  }
+  });
 
-  // ── Filter & search ────────────────────────────────────
+  // ── Filter & sort ─────────────────────────────────────
   function getFiltered() {
-    return _saves.filter(function(s) {
-      var matchMode = _filter === 'all' || s.mode === _filter;
+    var list = _saves.filter(function (s) {
+      var matchMode   = _filter === 'all' || s.mode === _filter;
       var matchSearch = !_search ||
         (s.selected_text || '').toLowerCase().indexOf(_search) !== -1 ||
         (s.source_title  || '').toLowerCase().indexOf(_search) !== -1 ||
         (s.source_domain || '').toLowerCase().indexOf(_search) !== -1;
       return matchMode && matchSearch;
     });
-  }
-
-  function setFilter(btn) {
-    document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
-    btn.classList.add('active');
-    _filter = btn.dataset.mode;
-    render();
-  }
-
-  function clearSearch() {
-    document.getElementById('search-input').value = '';
-    document.getElementById('search-clear').classList.remove('visible');
-    _search = '';
-    render();
+    list.sort(function (a, b) {
+      if (_sort === 'az') return (a.source_title || a.selected_text || '').localeCompare(b.source_title || b.selected_text || '');
+      var da = +new Date(a.created_at), db = +new Date(b.created_at);
+      return _sort === 'oldest' ? da - db : db - da;
+    });
+    return list;
   }
 
   // ── Render ─────────────────────────────────────────────
   function render() {
     var filtered = getFiltered();
-    var list     = document.getElementById('saves-list');
+    var list = document.getElementById('saves-list');
+    list.classList.toggle('grid', _view === 'grid');
 
     if (filtered.length === 0) {
-      list.innerHTML = _saves.length === 0 ? emptyStateHTML() : noResultsHTML();
+      list.classList.remove('grid');
+      list.innerHTML = _saves.length === 0
+        ? emptyHTML('book', 'No saves yet', 'Highlight text in the Explainly extension and tap Save — it shows up here.')
+        : emptyHTML('search', 'No results', 'Try a different search term or mode filter.');
       document.getElementById('load-more-wrap').style.display = 'none';
       return;
     }
@@ -167,134 +255,132 @@
     list.innerHTML = filtered.map(cardHTML).join('');
     document.getElementById('load-more-wrap').style.display = _hasMore ? 'block' : 'none';
     document.getElementById('load-more-btn').disabled = false;
+    bindCards();
 
-    // Restore expanded state
-    Object.keys(_expanded).forEach(function(id) {
-      var body = document.getElementById('body-' + id);
-      var card = document.querySelector('[data-id="' + id + '"]');
-      if (body && _expanded[id]) {
-        body.style.display = 'block';
-        if (card) card.classList.add('expanded');
+    // Restore open state
+    Object.keys(_open).forEach(function (id) {
+      if (_open[id]) {
+        var art = list.querySelector('[data-id="' + id + '"]');
+        if (art) art.classList.add('open');
       }
     });
   }
 
-  var MODE_LABELS = { eli5: 'ELI5', normal: 'Normal', deep: 'Deep', why: 'Why?' };
-
   function cardHTML(s) {
-    var title = s.source_title || truncate(s.selected_text || '', 70);
-    var sub   = (s.source_domain ? esc(s.source_domain) + ' · ' : '') + relDate(s.created_at);
-    var mode  = s.mode || 'normal';
+    var mode    = s.mode || 'normal';
+    var title   = s.source_title || truncate(s.selected_text || '', 70);
+    var domain  = s.source_domain || '';
+    var initial = (domain[0] || 'W').toUpperCase();
+    var date    = relDate(s.created_at);
 
-    return '<div class="save-card" data-id="' + esc(s.id) + '">' +
-      '<div class="save-card-header" onclick="toggleCard(\'' + esc(s.id) + '\')">' +
-        '<span class="mode-badge mode-' + mode + '">' + (MODE_LABELS[mode] || mode) + '</span>' +
-        '<div class="save-card-meta">' +
-          '<div class="save-card-title">' + esc(title) + '</div>' +
-          '<div class="save-card-sub">' + sub + '</div>' +
+    return '<article class="card hov save" data-id="' + esc(s.id) + '">' +
+      '<div class="save-head" data-toggle="' + esc(s.id) + '">' +
+        '<div class="save-body-col">' +
+          '<div class="save-top">' +
+            '<span class="mode-badge mode-' + mode + '">' + (MODE_LABELS[mode] || mode) + '</span>' +
+            (domain ? '<span class="save-src"><span class="save-fav-dot">' + initial + '</span>' + esc(domain) + ' &middot; ' + date + '</span>' : '<span class="save-src">' + date + '</span>') +
+          '</div>' +
+          '<h3 class="save-title">' + esc(title) + '</h3>' +
+          (s.selected_text ? '<p class="save-snippet">' + esc(s.selected_text) + '</p>' : '') +
         '</div>' +
-        '<button class="save-delete-btn" onclick="handleDelete(event,\'' + esc(s.id) + '\')" aria-label="Delete">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
-        '</button>' +
-        '<svg class="save-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '<div class="save-actions">' +
+          '<button class="icon-btn del" data-del="' + esc(s.id) + '" aria-label="Delete">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>' +
+          '</button>' +
+          '<svg class="save-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '</div>' +
       '</div>' +
-      '<div class="save-card-body" id="body-' + esc(s.id) + '" style="display:none;">' +
+      '<div class="save-body">' +
         (s.selected_text ? '<div class="save-selected">' + esc(s.selected_text) + '</div>' : '') +
         sectionHTML('Meaning', s.meaning) +
         sectionHTML('Simpler', s.simpler) +
         sectionHTML('Tone',    s.tone)    +
-        (s.source_url ? '<a class="save-source" href="' + s.source_url + '" target="_blank" rel="noopener">View source &rarr;</a>' : '') +
+        (s.source_url ? '<a class="save-source-link" href="' + esc(s.source_url) + '" target="_blank" rel="noopener">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M17 7H9M17 7v8"/></svg>View source' +
+        '</a>' : '') +
       '</div>' +
-    '</div>';
+    '</article>';
   }
 
   function sectionHTML(label, text) {
     if (!text) return '';
-    return '<div class="save-section"><strong>' + label + '</strong><p>' + esc(text) + '</p></div>';
+    return '<div class="save-section"><span class="lbl">' + label + '</span><p>' + esc(text) + '</p></div>';
   }
 
-  // ── Toggle expand ──────────────────────────────────────
-  function toggleCard(id) {
-    var body = document.getElementById('body-' + id);
-    var card = document.querySelector('[data-id="' + id + '"]');
-    if (!body) return;
-    var open = body.style.display !== 'none';
-    body.style.display = open ? 'none' : 'block';
-    if (card) card.classList.toggle('expanded', !open);
-    _expanded[id] = !open;
-  }
-
-  // ── Delete ─────────────────────────────────────────────
-  function handleDelete(e, id) {
-    e.stopPropagation();
-    var card = document.querySelector('[data-id="' + id + '"]');
-    if (!card) return;
-    card.style.opacity = '.4';
-    deleteSave(id)
-      .then(function() {
-        _saves = _saves.filter(function(s) { return s.id !== id; });
-        delete _expanded[id];
-        render();
-        showToast('Deleted');
-      })
-      .catch(function() {
-        card.style.opacity = '1';
-        showToast('Could not delete — try again');
+  // ── Card interactions ─────────────────────────────────
+  function bindCards() {
+    document.querySelectorAll('[data-toggle]').forEach(function (head) {
+      head.addEventListener('click', function (e) {
+        if (e.target.closest('[data-del]')) return;
+        var id  = head.dataset.toggle;
+        var art = head.closest('.save');
+        _open[id] = !_open[id];
+        art.classList.toggle('open', _open[id]);
       });
+    });
+
+    document.querySelectorAll('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var id   = btn.dataset.del;
+        var card = btn.closest('.save');
+        card.style.opacity = '.35';
+        card.style.pointerEvents = 'none';
+        deleteSave(id)
+          .then(function () {
+            _saves = _saves.filter(function (s) { return s.id !== id; });
+            delete _open[id];
+            var countEl = document.getElementById('side-saves-count');
+            if (countEl) countEl.textContent = _saves.length;
+            render();
+            showToast('Deleted');
+          })
+          .catch(function () {
+            card.style.opacity = '1';
+            card.style.pointerEvents = '';
+            showToast('Could not delete — try again');
+          });
+      });
+    });
   }
 
-  // ── States ─────────────────────────────────────────────
+  // ── Empty / loading states ─────────────────────────────
   function showSkeletons() {
     var html = '';
-    for (var i = 0; i < 3; i++) {
-      html += '<div class="skeleton-card">' +
-        '<div class="skeleton skeleton-badge"></div>' +
-        '<div class="skeleton-lines">' +
-          '<div class="skeleton skeleton-line"></div>' +
-          '<div class="skeleton skeleton-line short"></div>' +
-        '</div></div>';
+    for (var i = 0; i < 4; i++) {
+      html += '<div class="card save" style="padding:17px 18px;">' +
+        '<div style="display:flex;gap:13px;align-items:flex-start;">' +
+          '<div style="flex:1;">' +
+            '<div class="skeleton" style="width:60px;height:20px;border-radius:6px;background:var(--surface-2);margin-bottom:10px;"></div>' +
+            '<div class="skeleton" style="width:70%;height:16px;border-radius:5px;background:var(--surface-2);margin-bottom:7px;"></div>' +
+            '<div class="skeleton" style="width:45%;height:13px;border-radius:5px;background:var(--surface-2);"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
     }
     document.getElementById('saves-list').innerHTML = html;
   }
 
-  function emptyStateHTML() {
-    return '<div class="empty-state">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>' +
-      '<h3>No saves yet</h3>' +
-      '<p>Highlight text in the Explainly extension, tap Save, and it will appear here.</p>' +
-    '</div>';
-  }
-
-  function noResultsHTML() {
-    return '<div class="empty-state">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>' +
-      '<h3>No results</h3>' +
-      '<p>Try a different search term or filter.</p>' +
-    '</div>';
+  function emptyHTML(icon, heading, sub) {
+    var svg = icon === 'search'
+      ? '<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>'
+      : '<path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16l-8-4-8 4V5Z"/>';
+    return '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' + svg + '</svg>' +
+      '<h3>' + heading + '</h3><p>' + sub + '</p></div>';
   }
 
   function showError() {
     document.getElementById('saves-list').innerHTML =
-      '<div class="empty-state">' +
+      '<div class="empty">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
         '<h3>Could not load saves</h3>' +
         '<p>Check your connection and <a href="" onclick="location.reload();return false;">try again</a>.</p>' +
       '</div>';
   }
 
-  // ── Toast ──────────────────────────────────────────────
-  var _toastTimer;
-  function showToast(msg) {
-    var el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(_toastTimer);
-    _toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2500);
-  }
-
   // ── Helpers ────────────────────────────────────────────
   function esc(str) {
-    return String(str || '')
+    return String(str == null ? '' : str)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
@@ -306,16 +392,16 @@
   function relDate(iso) {
     if (!iso) return '';
     var diff = Date.now() - new Date(iso).getTime();
-    var mins = Math.floor(diff / 60000);
-    if (mins < 1)   return 'just now';
-    if (mins < 60)  return mins + 'm ago';
-    var hrs = Math.floor(mins / 60);
-    if (hrs < 24)   return hrs + 'h ago';
-    var days = Math.floor(hrs / 24);
-    if (days < 30)  return days + 'd ago';
-    var months = Math.floor(days / 30);
-    if (months < 12) return months + 'mo ago';
-    return Math.floor(months / 12) + 'yr ago';
+    var m = Math.floor(diff / 60000);
+    if (m < 1)   return 'just now';
+    if (m < 60)  return m + 'm ago';
+    var h = Math.floor(m / 60);
+    if (h < 24)  return h + 'h ago';
+    var d = Math.floor(h / 24);
+    if (d < 30)  return d + 'd ago';
+    var mo = Math.floor(d / 30);
+    if (mo < 12) return mo + 'mo ago';
+    return Math.floor(mo / 12) + 'yr ago';
   }
 </script>
 </body>

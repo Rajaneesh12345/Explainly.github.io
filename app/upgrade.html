@@ -1,209 +1,240 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent="indigo" data-font="techy" data-card="elevated" data-radius="rounded">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/icons/icon-192.png" type="image/png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Upgrade — Explainly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/app.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#1e1e2e" />
+  <meta name="theme-color" content="#06070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <style>
+    .poll-row{display:none;align-items:center;gap:10px;padding:14px 18px;border-radius:var(--r);
+      border:1px solid color-mix(in oklab,var(--a1) 30%,transparent);
+      background:color-mix(in oklab,var(--a1) 10%,transparent);
+      font-size:13.5px;color:var(--a-glow);margin-bottom:18px;font-family:var(--mono)}
+    .poll-row.show{display:flex}
+    .poll-dot{width:9px;height:9px;border-radius:50%;background:var(--a-glow);
+      animation:pdot 1.2s ease-in-out infinite}
+    @keyframes pdot{0%,100%{opacity:.3;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+    .provider-row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+    .provider-btn{padding:10px 22px;border-radius:999px;border:1px solid var(--line);
+      background:var(--surface);color:var(--ink-2);font-weight:600;font-size:13px;
+      cursor:pointer;transition:.2s}
+    .provider-btn:hover{border-color:var(--line-2);color:var(--ink)}
+    .provider-btn.active{color:#fff;background:linear-gradient(120deg,var(--a1),var(--a2));border-color:transparent}
+  </style>
 </head>
 <body>
+<canvas id="starfield"></canvas>
+<div class="bg-aura"></div>
 
-<nav class="app-nav">
-  <a href="/" class="nav-logo"><span>Explain</span>ly</a>
-  <span class="nav-title">Upgrade</span>
-  <a href="/app/account.html" class="nav-avatar" id="nav-avatar" style="display:none;">?</a>
-</nav>
+<div class="app-shell" id="app-shell">
 
-<main class="app-main">
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="side-brand">
+      <img class="brand-logo" src="/icons/logo-indigo.png" alt="" />
+      <span><span class="lite">Explain</span>ly</span>
+    </div>
+    <nav class="side-nav">
+      <a class="side-link" href="/app/library.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16l-8-4-8 4V5Z"/></svg>
+        <span>Library</span>
+      </a>
+      <a class="side-link" href="/app/account.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Account</span>
+      </a>
+      <a class="side-link active" href="/app/upgrade.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m12 2 2.39 6.96L21.6 9.2l-5.3 4.61 1.7 7.19L12 17.27 5.99 21l1.7-7.19L2.4 9.2l7.21-.24L12 2Z"/></svg>
+        <span>Upgrade</span>
+      </a>
+    </nav>
+    <div class="side-foot">
+      <button class="theme-btn" id="theme-side" aria-label="Toggle theme" style="align-self:flex-start">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <a class="side-account" href="/app/account.html">
+        <span class="avatar" id="side-avatar">?</span>
+        <span class="who"><b id="side-name">—</b><span id="side-email">—</span></span>
+      </a>
+    </div>
+  </aside>
 
-  <!-- Success banner (shown after payment) -->
-  <div class="success-banner" id="success-banner">
-    <h3>You're upgraded!</h3>
-    <p id="success-msg">Your plan has been updated. Enjoy your new features.</p>
-    <a href="/app/account.html" class="btn btn-primary" style="margin-top:.75rem;display:inline-flex;">View Account</a>
-  </div>
-
-  <!-- Failure banner (shown on cancel / timeout) -->
-  <div class="fail-banner" id="fail-banner">
-    <p id="fail-msg">Payment not completed. If you were charged, please wait a moment and refresh — it can take up to 60 seconds to confirm.</p>
-    <button class="btn btn-outline" onclick="dismissFail()" style="margin-top:.5rem;">Try Again</button>
-  </div>
-
-  <!-- Hero -->
-  <div class="upgrade-hero">
-    <h1>Unlock more of Explainly</h1>
-    <p>Higher daily limits, PDF support, cloud saves, and priority processing.</p>
-  </div>
-
-  <!-- Provider toggle -->
-  <div class="provider-row" id="provider-row">
-    <button class="provider-btn" id="btn-razorpay" onclick="setProvider('razorpay')">
-      Razorpay (India)
+  <!-- Top bar (mobile) -->
+  <header class="topbar">
+    <a class="brand" href="/app/library.html">
+      <img class="brand-logo" src="/icons/logo-indigo.png" alt="" />
+      <span><span class="lite">Explain</span>ly</span>
+    </a>
+    <span class="spacer"></span>
+    <button class="theme-btn" id="theme-top" aria-label="Toggle theme">
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     </button>
-    <button class="provider-btn" id="btn-paddle" onclick="setProvider('paddle')">
-      Paddle (International)
-    </button>
-  </div>
+    <a class="avatar" id="top-avatar" href="/app/account.html" style="width:38px;height:38px;font-size:15px">?</a>
+  </header>
 
-  <!-- Polling indicator -->
-  <div class="polling-indicator" id="polling-indicator">
-    <div class="poll-dot"></div>
-    <span>Waiting for payment confirmation…</span>
-  </div>
+  <main class="app-content">
+    <section class="page active" id="page-upgrade">
 
-  <!-- Plans -->
-  <div class="plans-wrap" id="plans-wrap">
-
-    <!-- Pro -->
-    <div class="plan-card" id="card-pro">
-      <div class="plan-name">Pro</div>
-      <div class="plan-tagline">For regular readers</div>
-      <div class="plan-price">
-        <span class="plan-currency">₹</span>
-        <span class="plan-amount">149</span>
-        <span class="plan-period">/month</span>
+      <!-- Banners -->
+      <div class="banner success" id="success-banner">
+        <h3>You're upgraded!</h3>
+        <p id="success-msg">Your plan has been updated. Enjoy your new features.</p>
       </div>
-      <div class="plan-usd">$4.99 / month</div>
-      <ul class="plan-features">
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>100 explains / day</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>10 Deep / day</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>10 Why? / day</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>PDF Viewer</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Cloud saves (unlimited)</li>
-      </ul>
-      <div class="plan-divider"></div>
-      <button class="btn btn-primary btn-full" id="buy-pro" onclick="handleBuy('pro', this)">Get Pro</button>
-    </div>
-
-    <!-- Premium -->
-    <div class="plan-card featured" id="card-premium">
-      <div class="plan-badge">Most Popular</div>
-      <div class="plan-name">Premium</div>
-      <div class="plan-tagline">For power users</div>
-      <div class="plan-price">
-        <span class="plan-currency">₹</span>
-        <span class="plan-amount">399</span>
-        <span class="plan-period">/month</span>
+      <div class="banner fail" id="fail-banner">
+        <p id="fail-msg">Payment not completed. If you were charged, please wait a moment and refresh — it can take up to 60 seconds to confirm.</p>
+        <button class="btn btn-ghost btn-sm" id="dismiss-fail" style="margin-top:10px">Try Again</button>
       </div>
-      <div class="plan-usd">$11.99 / month</div>
-      <ul class="plan-features">
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>500 explains / day</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>75 Deep / day</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>75 Why? / day</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Everything in Pro</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Priority queue</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Premium AI models</li>
-      </ul>
-      <div class="plan-divider"></div>
-      <button class="btn btn-primary btn-full" id="buy-premium" onclick="handleBuy('premium', this)">Get Premium</button>
-    </div>
 
-    <!-- Premium Yearly -->
-    <div class="plan-card" id="card-premium_yearly" style="width:100%;">
-      <div class="plan-badge badge-save">Save ~37%</div>
-      <div class="plan-name">Premium Yearly</div>
-      <div class="plan-tagline">Best value — billed once a year</div>
-      <div class="plan-price">
-        <span class="plan-currency">₹</span>
-        <span class="plan-amount">2,999</span>
-        <span class="plan-period">/year</span>
+      <!-- Polling indicator -->
+      <div class="poll-row" id="poll-row">
+        <div class="poll-dot"></div>
+        <span>Waiting for payment confirmation…</span>
       </div>
-      <div class="plan-usd">$99 / year (~$8.25/mo)</div>
-      <ul class="plan-features">
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Everything in Premium</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Pay once, covered for 12 months</li>
-        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Cancel anytime</li>
-      </ul>
-      <div class="plan-divider"></div>
-      <button class="btn btn-primary btn-full" id="buy-premium_yearly" onclick="handleBuy('premium_yearly', this)">Get Premium Yearly</button>
-    </div>
 
-  </div>
+      <!-- Hero -->
+      <div class="page-head" style="text-align:center">
+        <div class="up-hero">
+          <span class="eyebrow" style="justify-content:center">Plans &amp; pricing</span>
+          <h1 class="page-title">Unlock more of <span class="grad-text">Explainly</span></h1>
+          <p class="page-sub" style="margin-inline:auto">Higher daily limits, PDF support, cloud sync and priority processing — for the way you read.</p>
+        </div>
+        <div class="provider-row" style="margin-top:18px;margin-bottom:4px">
+          <button class="provider-btn" id="btn-razorpay">Razorpay (India)</button>
+          <button class="provider-btn" id="btn-paddle">Paddle (International)</button>
+        </div>
+        <div class="bill-toggle" id="bill-toggle">
+          <span class="thumb"></span>
+          <button data-period="monthly" class="on">Monthly</button>
+          <button data-period="annual">Annual <span class="save-pill">–37%</span></button>
+        </div>
+      </div>
 
-  <!-- Trust row -->
-  <div class="trust-row">
-    <span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-      30-day money-back guarantee
-    </span>
-    <span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      Secure checkout
-    </span>
-    <span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      Cancel anytime
-    </span>
-  </div>
+      <!-- Plans -->
+      <div class="plans" id="plans"></div>
 
-  <p style="text-align:center;font-size:.78rem;color:#9ca3af;margin-top:.25rem;">
-    Payments via Razorpay (India) or Paddle (International). <a href="/refund.html">Refund policy</a>
-  </p>
+      <!-- Comparison table -->
+      <div class="compare" id="compare">
+        <button class="cmp-toggle" id="cmp-toggle">
+          Compare all features
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="cmp-wrap"><div class="cmp-inner"><div class="cmp-scroll">
+          <table class="cmp" id="cmp-table"></table>
+        </div></div></div>
+      </div>
 
-</main>
+      <!-- Trust -->
+      <div class="trust">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>30-day money-back</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure checkout</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Cancel anytime</span>
+      </div>
+      <p class="legal">Payments via Razorpay (India) or Paddle (International). <a href="/refund.html">Refund policy</a></p>
 
-<nav class="tab-bar">
-  <a href="/app/library.html" class="tab-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-    <span>Library</span>
-  </a>
-  <a href="/app/account.html" class="tab-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span>Account</span>
-  </a>
-  <a href="/app/upgrade.html" class="tab-item active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-    <span>Upgrade</span>
-  </a>
-</nav>
+    </section>
+  </main>
+
+  <!-- Tab bar (mobile) -->
+  <nav class="tabbar">
+    <a class="tab-item" href="/app/library.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16l-8-4-8 4V5Z"/></svg>
+      <span>Library</span>
+    </a>
+    <a class="tab-item" href="/app/account.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Account</span>
+    </a>
+    <a class="tab-item active" href="/app/upgrade.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m12 2 2.39 6.96L21.6 9.2l-5.3 4.61 1.7 7.19L12 17.27 5.99 21l1.7-7.19L2.4 9.2l7.21-.24L12 2Z"/></svg>
+      <span>Upgrade</span>
+    </a>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="/js/config.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/app-shell.js"></script>
 <script>
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+
   var _provider    = detectProvider();
+  var _period      = 'monthly';
+  var _currentTier = 'free';
   var _pollTimer   = null;
   var _pollCount   = 0;
-  var MAX_POLLS    = 200; // 200 × 3s = 10 min
-  var _currentTier = 'free';
+  var MAX_POLLS    = 200;
 
-  // ── Paddle.js init ─────────────────────────────────────
+  var PLANS = [
+    {
+      id: 'free', name: 'Free', tag: 'For the occasional reader', featured: false,
+      monthly: { cur: '$', amt: '0',     per: '/mo', usd: 'Free forever' },
+      annual:  { cur: '$', amt: '0',     per: '/yr', usd: 'Free forever' },
+      features: ['20 explains / day', '3 Deep · 3 Why? / day', 'Local saves (50)', { off: 'PDF viewer' }, { off: 'Cloud sync' }],
+    },
+    {
+      id: 'pro', name: 'Pro', tag: 'For regular readers', featured: false,
+      monthly: { cur: '$', amt: '4.99',  per: '/mo', usd: '₹149 / month' },
+      annual:  { cur: '$', amt: '3.33',  per: '/mo', usd: '$39.99 / year' },
+      features: ['100 explains / day', '10 Deep · 10 Why? / day', 'PDF viewer', 'Cloud sync (unlimited)'],
+    },
+    {
+      id: 'premium', name: 'Premium', tag: 'For power users', featured: true, badge: 'Most popular',
+      monthly: { cur: '$', amt: '11.99', per: '/mo', usd: '₹399 / month' },
+      annual:  { cur: '$', amt: '8.25',  per: '/mo', usd: '$99 / year', save: 'Save ~37%' },
+      features: ['500 explains / day', '75 Deep · 75 Why? / day', 'Everything in Pro', 'Priority queue', 'Premium AI models'],
+    },
+  ];
+
+  var CMP_ROWS = [
+    { label: 'Explains / day',     free: '20',  pro: '100', premium: '500' },
+    { label: 'Deep mode / day',    free: '3',   pro: '10',  premium: '75'  },
+    { label: 'Why? mode / day',    free: '3',   pro: '10',  premium: '75'  },
+    { label: 'Saved explanations', free: '50',  pro: '∞',   premium: '∞'   },
+    { label: 'Cloud sync',         free: false, pro: true,  premium: true  },
+    { label: 'PDF viewer',         free: false, pro: true,  premium: true  },
+    { label: 'Priority queue',     free: false, pro: false, premium: true  },
+    { label: 'Premium AI models',  free: false, pro: false, premium: true  },
+  ];
+
+  // ── Paddle init ───────────────────────────────────────
   Paddle.Initialize({
     token: PADDLE_CLIENT_TOKEN,
-    eventCallback: function(data) {
-      if (data.name === 'checkout.completed') {
-        Paddle.Checkout.close();
-      }
+    eventCallback: function (data) {
+      if (data.name === 'checkout.completed') Paddle.Checkout.close();
       if (data.name === 'checkout.closed' || data.name === 'checkout.error') {
         clearInterval(_pollTimer);
-        document.getElementById('polling-indicator').classList.remove('show');
+        document.getElementById('poll-row').classList.remove('show');
         showFail('Payment cancelled. You have not been charged.');
       }
     }
   });
 
-  // ── Deep-link params from extension ───────────────────
-  (function() {
+  // ── Deep-link auto-highlight from extension ───────────
+  (function () {
     var params = new URLSearchParams(window.location.search);
     var planParam     = params.get('plan');
     var providerParam = params.get('provider');
-
-    if (providerParam === 'razorpay' || providerParam === 'paddle') {
-      _provider = providerParam;
-    }
-
+    if (providerParam === 'razorpay' || providerParam === 'paddle') _provider = providerParam;
     if (planParam) {
-      setTimeout(function() {
+      setTimeout(function () {
         var card = document.getElementById('card-' + planParam);
         if (!card) return;
         card.style.transition = 'box-shadow .4s';
-        card.style.boxShadow  = '0 0 0 2px #5c6bc0, 0 8px 32px rgba(92,107,192,.35)';
+        card.style.boxShadow  = '0 0 0 2px var(--a1), var(--shadow)';
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 300);
     }
@@ -211,29 +242,23 @@
 
   // ── Boot ──────────────────────────────────────────────
   updateProviderUI();
+  renderPlans();
+  renderCmpTable();
+  positionThumb();
 
   if (getToken()) {
-    var av = document.getElementById('nav-avatar');
-    av.textContent = getAvatarInitial();
-    av.style.display = 'flex';
-
-    fetchUsage().then(function(data) {
+    fetchUsage().then(function (data) {
       _currentTier = (data.tier || 'free').toLowerCase();
-      markCurrentPlan(_currentTier);
-    }).catch(function() {});
+      renderPlans();
+    }).catch(function () {});
   }
 
-  // ── Provider detect ────────────────────────────────────
+  // ── Provider ──────────────────────────────────────────
   function detectProvider() {
     try {
       var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       return (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') ? 'razorpay' : 'paddle';
-    } catch(e) { return 'paddle'; }
-  }
-
-  function setProvider(p) {
-    _provider = p;
-    updateProviderUI();
+    } catch (e) { return 'paddle'; }
   }
 
   function updateProviderUI() {
@@ -241,114 +266,193 @@
     document.getElementById('btn-paddle').classList.toggle('active',   _provider === 'paddle');
   }
 
-  // ── Mark current plan ──────────────────────────────────
-  function markCurrentPlan(tier) {
-    var planMap = { pro: 'pro', premium: 'premium' };
-    var key = planMap[tier];
-    if (!key) return;
-    var btn = document.getElementById('buy-' + key);
-    var card = document.getElementById('card-' + key);
-    if (btn)  { btn.textContent = 'Current Plan'; btn.disabled = true; }
-    if (card) { card.classList.add('current-plan'); card.classList.remove('featured'); }
-    // Add current badge
-    var badge = document.createElement('div');
-    badge.className = 'plan-badge badge-current';
-    badge.textContent = 'Current Plan';
-    if (card) card.insertBefore(badge, card.firstChild);
+  document.getElementById('btn-razorpay').addEventListener('click', function () { _provider = 'razorpay'; updateProviderUI(); });
+  document.getElementById('btn-paddle').addEventListener('click',   function () { _provider = 'paddle';   updateProviderUI(); });
+
+  // ── Billing toggle ────────────────────────────────────
+  document.getElementById('bill-toggle').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    document.querySelectorAll('#bill-toggle button').forEach(function (x) { x.classList.remove('on'); });
+    b.classList.add('on');
+    _period = b.dataset.period;
+    positionThumb();
+    renderPlans();
+  });
+
+  function positionThumb() {
+    requestAnimationFrame(function () {
+      var on    = document.querySelector('#bill-toggle button.on');
+      var thumb = document.querySelector('#bill-toggle .thumb');
+      if (on && thumb) { thumb.style.left = on.offsetLeft + 'px'; thumb.style.width = on.offsetWidth + 'px'; }
+    });
   }
 
-  // ── Buy handler ────────────────────────────────────────
+  // ── Plans ─────────────────────────────────────────────
+  function renderPlans() {
+    document.getElementById('plans').innerHTML = PLANS.map(function (pl) {
+      var pr        = pl[_period];
+      var isCurrent = pl.id === _currentTier;
+      var badge = '';
+      if (isCurrent)                              badge = '<div class="plan-badge current">Current plan</div>';
+      else if (pl.featured)                       badge = '<div class="plan-badge">' + pl.badge + '</div>';
+      else if (_period === 'annual' && pr.save)   badge = '<div class="plan-badge save">' + pr.save + '</div>';
+
+      var feats = pl.features.map(function (f) {
+        return typeof f === 'object'
+          ? '<li class="off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>' + f.off + '</li>'
+          : '<li>' + CHECK + f + '</li>';
+      }).join('');
+
+      var labels = { free: 'Current plan', pro: 'Get Pro', premium: 'Get Premium' };
+      var cta = isCurrent
+        ? '<button class="btn btn-ghost btn-full" disabled>Current plan</button>'
+        : '<button class="btn ' + (pl.featured ? 'btn-primary' : 'btn-ghost') + ' btn-full" data-buy="' + pl.id + '">' + (labels[pl.id] || 'Upgrade') + '</button>';
+
+      return '<div class="card plan ' + (pl.featured ? 'featured' : '') + ' ' + (isCurrent ? 'current-plan' : '') + '" id="card-' + pl.id + '">' +
+        badge +
+        '<div class="plan-name">' + pl.name + '</div>' +
+        '<div class="plan-tag">' + pl.tag + '</div>' +
+        '<div class="plan-price"><span class="cur">' + pr.cur + '</span><span class="amt">' + pr.amt + '</span><span class="per">' + pr.per + '</span></div>' +
+        '<div class="plan-usd">' + pr.usd + '</div>' +
+        '<ul>' + feats + '</ul>' +
+        '<div class="plan-spacer"></div>' +
+        cta +
+      '</div>';
+    }).join('');
+
+    document.querySelectorAll('#plans [data-buy]').forEach(function (btn) {
+      btn.addEventListener('click', function () { handleBuy(btn.dataset.buy, btn); });
+    });
+  }
+
+  // ── Buy handler ───────────────────────────────────────
   function handleBuy(planKey, btn) {
     if (!getToken()) {
       window.location.href = '/app/login.html?next=/app/upgrade.html';
       return;
     }
     var targetTier = planKey === 'premium_yearly' ? 'premium' : planKey;
-    if (TIER_ORDER[_currentTier] >= TIER_ORDER[targetTier]) {
-      return;
-    }
+    if (TIER_ORDER[_currentTier] >= TIER_ORDER[targetTier]) return;
 
     btn.disabled = true;
     btn.textContent = 'Opening…';
 
     if (_provider === 'paddle') {
-      var email = getEmail();
+      var paddleKey = (_period === 'annual' && planKey === 'premium') ? 'premium_yearly' : planKey;
       Paddle.Checkout.open({
-        items: [{ priceId: PADDLE_PRICE_IDS[planKey], quantity: 1 }],
-        customer: { email: email },
-        customData: { user_email: email },
+        items: [{ priceId: PADDLE_PRICE_IDS[paddleKey], quantity: 1 }],
+        customer: { email: getEmail() },
+        customData: { user_email: getEmail() },
         settings: { displayMode: 'overlay' }
       });
       btn.disabled = false;
-      btn.textContent = getBtnLabel(planKey);
-      startPolling(planKey);
+      btn.textContent = getBuyLabel(planKey);
+      startPolling(targetTier);
       return;
     }
 
-    // Razorpay: open payment link with email pre-filled so webhook can identify the account
-    var rzpEmail = getEmail();
-    var rzpUrl = PAYMENT_LINKS.razorpay[planKey];
-    if (rzpEmail) rzpUrl += '?prefill[email]=' + encodeURIComponent(rzpEmail);
+    // Razorpay
+    var rzpKey = (_period === 'annual' && planKey === 'premium') ? 'premium_yearly' : planKey;
+    var rzpUrl = PAYMENT_LINKS.razorpay[rzpKey];
+    if (!rzpUrl) {
+      showToast('Payment link not available yet.');
+      btn.disabled = false;
+      btn.textContent = getBuyLabel(planKey);
+      return;
+    }
+    var email = getEmail();
+    if (email) rzpUrl += '?prefill[email]=' + encodeURIComponent(email);
     window.open(rzpUrl, '_blank');
     btn.disabled = false;
-    btn.textContent = getBtnLabel(planKey);
-    startPolling(planKey);
+    btn.textContent = getBuyLabel(planKey);
+    startPolling(targetTier);
   }
 
-  function getBtnLabel(planKey) {
-    return { pro: 'Get Pro', premium: 'Get Premium', premium_yearly: 'Get Premium Yearly' }[planKey] || 'Upgrade';
+  function getBuyLabel(key) {
+    return { free: 'Current plan', pro: 'Get Pro', premium: 'Get Premium' }[key] || 'Upgrade';
   }
 
-  // ── Polling ────────────────────────────────────────────
-  function startPolling(planKey) {
+  // ── Polling ───────────────────────────────────────────
+  function startPolling(targetTier) {
     clearInterval(_pollTimer);
     _pollCount = 0;
-    document.getElementById('polling-indicator').classList.add('show');
-    var targetTier = planKey === 'premium_yearly' ? 'premium' : planKey;
+    document.getElementById('poll-row').classList.add('show');
 
-    _pollTimer = setInterval(function() {
+    _pollTimer = setInterval(function () {
       _pollCount++;
       if (_pollCount > MAX_POLLS) {
         clearInterval(_pollTimer);
-        document.getElementById('polling-indicator').classList.remove('show');
+        document.getElementById('poll-row').classList.remove('show');
         showFail('Payment not confirmed after 10 minutes. If you completed payment, please refresh the page.');
         return;
       }
-      fetchUsage().then(function(data) {
+      fetchUsage().then(function (data) {
         var newTier = (data.tier || 'free').toLowerCase();
         if (TIER_ORDER[newTier] >= TIER_ORDER[targetTier]) {
           clearInterval(_pollTimer);
-          document.getElementById('polling-indicator').classList.remove('show');
+          document.getElementById('poll-row').classList.remove('show');
           _currentTier = newTier;
           showSuccess(newTier);
-          markCurrentPlan(newTier);
+          renderPlans();
         }
-      }).catch(function() {});
+      }).catch(function () {});
     }, 3000);
   }
 
-  // ── Success ────────────────────────────────────────────
+  // ── Banners ───────────────────────────────────────────
   function showSuccess(tier) {
-    var label = tier.charAt(0).toUpperCase() + tier.slice(1);
     document.getElementById('success-msg').textContent =
-      'Your account has been upgraded to ' + label + '. Enjoy your new features!';
+      'Your account has been upgraded to ' + cap(tier) + '. Enjoy your new features!';
     document.getElementById('fail-banner').classList.remove('show');
-    var banner = document.getElementById('success-banner');
-    banner.classList.add('show');
-    banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var b = document.getElementById('success-banner');
+    b.classList.add('show');
+    b.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showToast('Upgraded to ' + cap(tier));
   }
 
-  // ── Failure ────────────────────────────────────────────
   function showFail(msg) {
     document.getElementById('fail-msg').textContent = msg || 'Payment not completed.';
-    var banner = document.getElementById('fail-banner');
-    banner.classList.add('show');
-    banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var b = document.getElementById('fail-banner');
+    b.classList.add('show');
+    b.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function dismissFail() {
+  document.getElementById('dismiss-fail').addEventListener('click', function () {
     document.getElementById('fail-banner').classList.remove('show');
+  });
+
+  // ── Comparison table ──────────────────────────────────
+  function renderCmpTable() {
+    var YES = '<span class="yes">' + CHECK + '</span>';
+    var NO  = '<span class="no">—</span>';
+    function cell(v) {
+      if (v === true)  return YES;
+      if (v === false) return NO;
+      return String(v);
+    }
+    document.getElementById('cmp-table').innerHTML =
+      '<thead><tr>' +
+        '<th scope="col" style="text-align:left">Feature</th>' +
+        '<th scope="col">Free</th>' +
+        '<th scope="col" class="colpop">Premium</th>' +
+        '<th scope="col">Pro</th>' +
+      '</tr></thead>' +
+      '<tbody>' + CMP_ROWS.map(function (r) {
+        return '<tr>' +
+          '<th scope="row">' + r.label + '</th>' +
+          '<td>' + cell(r.free) + '</td>' +
+          '<td class="colpop">' + cell(r.premium) + '</td>' +
+          '<td>' + cell(r.pro) + '</td>' +
+        '</tr>';
+      }).join('') + '</tbody>';
   }
+
+  document.getElementById('cmp-toggle').addEventListener('click', function () {
+    document.getElementById('compare').classList.toggle('open');
+  });
+
+  // ── Helper ────────────────────────────────────────────
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 </script>
 </body>
 </html>

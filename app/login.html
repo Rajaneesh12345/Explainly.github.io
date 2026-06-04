@@ -1,27 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent="indigo" data-font="techy" data-card="elevated" data-radius="rounded">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/icons/icon-192.png" type="image/png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In — Explainly</title>
+  <meta name="description" content="Sign in to Explainly to access your saved explanations and manage your plan." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/app.css" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#1e1e2e" />
+  <meta name="theme-color" content="#06070f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </head>
-<body class="login-page">
+<body>
+<canvas id="starfield"></canvas>
+<div class="bg-aura"></div>
 
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="logo-text"><span class="logo-accent">Explain</span>ly</div>
+<div class="login-stage" id="login-stage">
+  <div class="login-card card">
+    <div class="login-orb">
+      <div class="glow"></div>
+      <div class="ring"></div>
+      <img class="brand-logo" src="/icons/logo-indigo.png" alt="Explainly" />
     </div>
+    <div class="login-brand"><span class="lite">Explain</span>ly</div>
     <h1 class="login-title">Sign in to your account</h1>
-    <p class="login-sub">Access your saved explanations, manage your plan, and upgrade from any device.</p>
+    <p class="login-sub">Access your saved explanations, track your reading, and manage your plan from any device.</p>
 
-    <button id="google-btn" class="btn-google" onclick="handleSignIn()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+    <button class="btn-google" id="google-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -30,36 +40,55 @@
       Continue with Google
     </button>
 
-    <div id="login-error" style="display:none; margin-top:.875rem; padding:.65rem .875rem; background:#fef2f2; border-radius:8px; font-size:.82rem; color:#b91c1c;"></div>
+    <div id="login-error" style="display:none;margin-top:.875rem;padding:.65rem .875rem;background:color-mix(in oklab,#ff6b6b 14%,transparent);border:1px solid color-mix(in oklab,#ff6b6b 30%,transparent);border-radius:10px;font-size:.82rem;color:#ff8080;"></div>
 
-    <div class="login-divider"></div>
+    <ul class="login-perks">
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Sync saves across every device
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Four explanation depths — ELI5 to Deep
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Free plan — no card required
+      </li>
+    </ul>
 
-    <p class="login-footer">
-      New to Explainly? <a href="https://chromewebstore.google.com/search/explainly" target="_blank" rel="noopener">Get the extension</a><br />
+    <div class="login-foot">
+      New to Explainly? <a href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">Get the extension</a><br />
       <a href="/pricing.html">View pricing</a> &middot; <a href="/">Home</a>
-    </p>
+    </div>
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/auth.js"></script>
-  <script>
-    if (getToken()) window.location.replace('/app/library.html');
+<div class="toast" id="toast"></div>
 
-    var urlParams = new URLSearchParams(window.location.search);
-    var errorMsg  = urlParams.get('error');
-    if (errorMsg) {
-      var el = document.getElementById('login-error');
-      el.textContent = decodeURIComponent(errorMsg);
-      el.style.display = 'block';
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/app-shell.js"></script>
+<script>
+  // Redirect if already signed in
+  if (getToken()) window.location.replace('/app/library.html');
 
-    function handleSignIn() {
-      var btn = document.getElementById('google-btn');
-      btn.disabled = true;
-      btn.textContent = 'Redirecting…';
-      signInWithGoogle();
-    }
-  </script>
+  // Show error from URL param
+  var errorMsg = new URLSearchParams(window.location.search).get('error');
+  if (errorMsg) {
+    var errEl = document.getElementById('login-error');
+    errEl.textContent = decodeURIComponent(errorMsg);
+    errEl.style.display = 'block';
+  }
+
+  document.getElementById('google-btn').addEventListener('click', function () {
+    var btn = document.getElementById('google-btn');
+    btn.disabled = true;
+    btn.style.opacity = '.65';
+    btn.innerHTML = 'Redirecting…';
+    signInWithGoogle();
+  });
+</script>
 </body>
 </html>

@@ -25,10 +25,10 @@ demo.html             Interactive demo page
 success.html          Post-payment success redirect page
 
 app/
-  login.html          Google OAuth sign-in page
-  account.html        Account dashboard (tier, usage, sign-out)
-  library.html        Saved explanations library
-  upgrade.html        Upgrade / payment page (old design)
+  login.html          Google OAuth sign-in page (new design)
+  account.html        Account dashboard — tier, usage bars, stats, settings, tweaks (new design)
+  library.html        Saved explanations library — search, filter, sort, card expand (new design)
+  upgrade.html        Plans & payment — billing toggle, comparison table, Razorpay + Paddle (new design)
 
 auth/
   callback.html       Supabase OAuth callback — exchanges code for session tokens
@@ -36,12 +36,15 @@ auth/
 css/
   landing.css         Design system for index + legal pages (dark/light, glassmorphism, starfield)
   legal.css           Additional styles for legal pages (card, callout, guarantee banner, tabs)
-  app.css             Separate styles for app/* pages
+  app.css             Design system for app/* pages — SAME token system as landing.css
+                      (migrated from Explainly-unproton-app.zip, June 2026)
 
 js/
   config.js           Global constants: backend URL, Supabase keys, payment links, tier limits
   auth.js             Auth helpers: sign-in, sign-out, token storage, refresh
   api.js              apiFetch() wrapper: attaches Bearer token, handles 401 refresh
+  app-shell.js        Shared app shell — tweaks panel, starfield, theme toggle, logo swap, toast
+                      (loaded on every app/* page after config.js + auth.js)
   landing.js          Landing page interactions: starfield canvas, theme toggle, pricing toggle,
                       typewriter, highlight→popup simulation, scroll reveal
 
@@ -76,9 +79,22 @@ Used by: `index.html`, `privacy.html`, `terms.html`, `refund.html`
 ### System 2 — App (`css/app.css`)
 Used by: `app/*.html`, `auth/callback.html`
 
-- Separate design, not themed. Dark navy (`#1e1e2e`) nav.
-- Does **not** use Google Fonts or the token system above.
-- Do not mix the two systems.
+Now uses the **same token system as System 1** (migrated June 2026 from `Explainly-unproton-app.zip`).
+
+- **Fonts**: same Google Fonts stack — Space Grotesk, Manrope, JetBrains Mono, Bricolage Grotesque, Sora
+- **Theming** via `data-*` attributes on `<html>` (all 5 now used):
+  - `data-theme="dark|light"` — same dark/light palettes as landing
+  - `data-accent="indigo|navy|slate|abyss|forest"` — accent colour tokens `--a1`, `--a2`, `--a-glow`, `--a-ink`
+  - `data-font="techy|humanist|rounded"` — swaps `--display` font family
+  - `data-card="elevated|outline|glass"` — card surface style
+  - `data-radius="sharp|rounded|soft"` — corner radius scale via `--r`
+- Defaults: `data-theme="dark" data-accent="indigo" data-font="techy" data-card="elevated" data-radius="rounded"`
+- Background layers: same `<canvas id="starfield">` + `.bg-aura` pattern as landing
+- **App shell layout**: `.app-shell` flex container — `.sidebar` (desktop, sticky) + `.topbar` + `.tabbar` (mobile)
+- **Tweaks persistence**: `localStorage` key `explainly-app-tweaks` (JSON object, all 5 keys)
+- **Settings persistence**: `localStorage` key `explainly-settings` (depth preference, toggle states)
+- Logo images load from `/icons/logo-{accent}.png` and swap automatically when accent changes
+- `js/app-shell.js` must be loaded last (after config + auth) on every app page — it applies tweaks immediately on parse to avoid theme flash
 
 ---
 
@@ -105,6 +121,15 @@ Global `var` declarations (no modules). Contains:
 - `fetchUsage()` — GET `/api/usage`
 - `fetchSaves(offset, limit)` — GET `/api/saves`
 - `deleteSave(id)` — DELETE `/api/saves?id=`
+
+### `js/app-shell.js` — all app pages (load after config.js + auth.js)
+- Applies tweaks from `explainly-app-tweaks` immediately on script parse (prevents theme flash)
+- `window.showToast(msg)` — global toast helper used across all app pages
+- On `DOMContentLoaded`: binds `#theme-side` + `#theme-top` toggle buttons; populates sidebar
+  user info (`#side-avatar`, `#side-name`, `#side-email`, `#top-avatar`) from `getEmail()`; starts
+  starfield canvas; builds tweaks panel if `#tweaks-root` exists; wires `#open-tweaks-btn`
+- **Starfield**: accent-reactive (watches `data-accent` via MutationObserver), shooting stars, reduced-motion aware
+- **Tweaks panel**: draggable floating panel — controls theme, accent, font, card style, radius
 
 ### `js/landing.js` — landing page only
 Handles: theme toggle, header scroll shadow, starfield canvas (shooting stars, accent-reactive),
@@ -161,14 +186,42 @@ Always use `js/config.js → TIER_LIMITS` for feature limits. Pricing amounts:
 
 ## What still uses the OLD design
 
-These pages have not been migrated to the new design system and use either old inline `<style>` blocks or `css/app.css`:
-
-- `pricing.html` — standalone pricing page, old inline styles
-- `app/upgrade.html` — upgrade/payment page, uses `css/app.css`
-- `app/account.html` — uses `css/app.css`
-- `app/library.html` — uses `css/app.css`
-- `app/login.html` — uses `css/app.css`
+- `pricing.html` — standalone pricing page, old inline styles (not yet migrated)
 - `demo.html` / `success.html` — not yet reviewed
+
+All `app/*.html` pages were migrated to the new design system in June 2026 (source: `Explainly-unproton-app.zip`).
+
+---
+
+## App pages — design notes
+
+### Script load order (all app pages)
+```html
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/..."></script>
+<script src="/js/config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/api.js"></script>       <!-- omit on login.html -->
+<script src="/js/app-shell.js"></script> <!-- must be last shared script -->
+<script>/* page-specific inline JS */</script>
+```
+
+### app/library.html
+- Card structure uses `.card.hov.save` → `.save-head[data-toggle]` → `.save-body`
+- Real API: `fetchSaves(offset, limit)` — returns `{id, mode, selected_text, source_title, source_domain, source_url, meaning, simpler, tone, created_at}`
+- No `fav`, `tags`, or `collection` fields from real API — those UI elements are omitted
+- Delete via `deleteSave(id)` from `api.js`
+
+### app/account.html
+- Stats grid shows live data from `fetchUsage()` — returns `{tier, usage_today, usage_deep_today, usage_why_today}`
+- Streak and 7-day chart are **not shown** — data not available from the API
+- Settings (depth preference, toggles) persist in `localStorage` key `explainly-settings`
+- Tweaks panel is available here via "Open Tweaks" button in Settings section
+
+### app/upgrade.html
+- `#tweaks-root` is **not present** on this page (tweaks only on account)
+- Billing toggle (Monthly / Annual) animates `.thumb` slider within `#bill-toggle`
+- Plan cards rendered dynamically by `renderPlans()` — re-runs on billing period change and after upgrade poll
+- Comparison table column order: Free | Premium (highlighted) | Pro
 
 ---
 
@@ -184,4 +237,5 @@ These pages have not been migrated to the new design system and use either old i
 
 ## Design handoff
 
-The original design files are in `handoff_extract/` (gitignored). Source zip is `Explainly-unproton-handoff.zip` (also gitignored). Both can be deleted once the implementation is complete and verified.
+- `Explainly-unproton-handoff.zip` (gitignored) — original landing/legal design source
+- `Explainly-unproton-app.zip` — app pages design source (Library, Account, Upgrade, Login). Implementation complete as of June 2026. The zip contains `explainly-app.css` (now `css/app.css`), `explainly-app.js` (reference only — logic was split into `js/app-shell.js` and inline page scripts), `explainly-app-data.js` (mock data, not used in production), and `assets/logo-*.png` (copied to `icons/`).
