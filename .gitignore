@@ -1,0 +1,23 @@
+# Extracted design handoff
+handoff_extract/
+Explainly-unproton-handoff.zip
+
+# Database
+ruvector.db
+
+# Claude Code session data
+.claude/
+
+# Jekyll build output
+_site/
+.jekyll-cache/
+.bundle/
+vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node (if ever used)
+node_modules/

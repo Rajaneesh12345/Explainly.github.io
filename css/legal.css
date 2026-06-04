@@ -1,0 +1,101 @@
+/* ============================================================
+   EXPLAINLY — legal pages (Terms · Privacy · Refund)
+   Built on the tokens + components in landing.css
+   ============================================================ */
+
+.legal-main{position:relative;z-index:1}
+
+/* ---------- Title block ---------- */
+.legal-hero{max-width:920px;margin-inline:auto;padding:clamp(44px,7vw,92px) 24px clamp(20px,3vw,34px)}
+.legal-hero h1{font-family:var(--display);font-weight:600;letter-spacing:-.03em;line-height:1.03;
+  font-size:clamp(38px,6.4vw,68px);margin-top:18px}
+.legal-hero .lead{max-width:60ch}
+.legal-updated{display:inline-flex;align-items:center;gap:9px;margin-top:24px;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink-3);
+  padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.legal-updated .dot{width:7px;height:7px;border-radius:50%;background:var(--a-glow);
+  box-shadow:0 0 0 4px color-mix(in oklab,var(--a1) 22%,transparent)}
+
+/* ---------- Document shell ---------- */
+.legal-shell{max-width:920px;margin:0 auto clamp(64px,9vw,120px);padding-inline:24px}
+.legal-card{background:linear-gradient(180deg,var(--surface),transparent);
+  border:1px solid var(--line);border-radius:var(--r-xl);
+  padding:clamp(26px,4.4vw,60px);box-shadow:var(--shadow)}
+
+.legal-card>p{color:var(--ink-2);font-size:16px;line-height:1.75;margin-bottom:16px;text-wrap:pretty}
+.legal-card h2{font-family:var(--display);font-weight:600;letter-spacing:-.01em;
+  font-size:clamp(21px,2.6vw,27px);line-height:1.2;color:var(--ink);
+  margin:46px 0 16px;padding-top:30px;border-top:1px solid var(--line)}
+.legal-card>p:first-of-type{font-size:17px;color:var(--ink)}
+.legal-card h2:first-of-type{margin-top:34px}
+.legal-card h3{font-family:var(--display);font-size:17.5px;font-weight:600;letter-spacing:-.01em;
+  color:var(--ink);margin:28px 0 10px}
+.legal-card ul,.legal-card ol{margin:10px 0 20px;padding-left:0;list-style:none;
+  display:flex;flex-direction:column;gap:11px}
+.legal-card li{position:relative;padding-left:26px;color:var(--ink-2);font-size:15.5px;line-height:1.65;text-wrap:pretty}
+.legal-card ul li::before{content:"";position:absolute;left:6px;top:11px;width:6px;height:6px;
+  border-radius:50%;background:var(--a-glow);box-shadow:0 0 8px color-mix(in oklab,var(--a1) 60%,transparent)}
+.legal-card ol{counter-reset:li}
+.legal-card ol li{counter-increment:li}
+.legal-card ol li::before{content:counter(li);position:absolute;left:0;top:1px;
+  width:18px;height:18px;border-radius:6px;display:grid;place-items:center;
+  font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--a-glow);
+  background:color-mix(in oklab,var(--a1) 14%,transparent);
+  border:1px solid color-mix(in oklab,var(--a1) 30%,transparent)}
+.legal-card strong{color:var(--ink);font-weight:600}
+.legal-card a{color:var(--a-glow);border-bottom:1px solid color-mix(in oklab,var(--a-glow) 35%,transparent);
+  transition:color .2s,border-color .2s}
+.legal-card a:hover{color:var(--ink);border-bottom-color:var(--a-glow)}
+.legal-card code{font-family:var(--mono);font-size:.85em;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--a-ink)}
+
+/* ---------- Callout (privacy summary) ---------- */
+.legal-note{display:flex;gap:15px;align-items:flex-start;
+  background:color-mix(in oklab,var(--a1) 8%,var(--surface));
+  border:1px solid color-mix(in oklab,var(--a1) 32%,var(--line));
+  border-radius:var(--r-md);padding:20px 22px;margin:4px 0 30px;
+  font-size:15px;line-height:1.65;color:var(--ink-2)}
+.legal-note .ic{flex-shrink:0;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--a1),var(--a2));color:#fff;box-shadow:0 8px 18px -8px var(--a1)}
+.legal-note .ic svg{width:18px;height:18px}
+.legal-note strong{color:var(--ink)}
+
+/* ---------- Guarantee (refund) ---------- */
+.legal-guarantee{display:flex;gap:20px;align-items:flex-start;
+  background:linear-gradient(140deg,color-mix(in oklab,var(--a1) 15%,var(--surface)),var(--surface));
+  border:1px solid color-mix(in oklab,var(--a1) 38%,var(--line));
+  border-radius:var(--r-lg);padding:28px;margin-bottom:32px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.legal-guarantee::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 120% at 88% -20%,color-mix(in oklab,var(--a1) 26%,transparent),transparent 60%)}
+.legal-guarantee>*{position:relative}
+.legal-guarantee .g-ic{flex-shrink:0;width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--a1),var(--a2));color:#fff;box-shadow:0 12px 26px -10px var(--a1)}
+.legal-guarantee .g-ic svg{width:26px;height:26px}
+.legal-guarantee h3{font-family:var(--display);font-size:19px;font-weight:600;color:var(--ink)}
+.legal-guarantee p{color:var(--ink-2);font-size:15px;line-height:1.65;margin-top:7px;margin-bottom:0}
+
+.legal-card .btn{margin-top:6px}
+
+/* ---------- Contact card ---------- */
+.legal-contact{margin-top:40px;background:var(--surface-2);border:1px solid var(--line-2);
+  border-radius:var(--r-lg);padding:26px 28px;display:flex;flex-direction:column;gap:7px;
+  font-size:15px;line-height:1.6;color:var(--ink-2)}
+.legal-contact .lc-name{display:flex;align-items:center;gap:10px;
+  font-family:var(--display);font-weight:600;font-size:18px;color:var(--ink);margin-bottom:4px}
+.legal-contact .lc-name img{width:30px;height:30px;border-radius:50%;
+  box-shadow:0 0 0 1px var(--line),0 6px 16px -6px color-mix(in oklab,var(--a1) 55%,transparent)}
+.legal-contact a{color:var(--a-glow)}
+.legal-contact a:hover{color:var(--ink)}
+
+/* ---------- Cross-page legal nav ---------- */
+.legal-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.legal-tabs a{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;font-weight:600;
+  padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink-2);transition:.2s;text-decoration:none}
+.legal-tabs a:hover{color:var(--ink);border-color:var(--a1)}
+.legal-tabs a[aria-current="page"]{color:#fff;border-color:transparent;
+  background:linear-gradient(120deg,var(--a1),var(--a2));box-shadow:0 8px 20px -8px var(--a1)}
+
+@media (max-width:560px){
+  .legal-guarantee{flex-direction:column;gap:14px}
+}

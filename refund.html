@@ -1,140 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent="indigo" data-font="techy">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/icons/icon-192.png" type="image/png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Refund Policy — Explainly</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #111827; background: #f9fafb; line-height: 1.7; }
-    a { color: #5c6bc0; }
-    nav { background: #1e1e2e; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; height: 62px; position: sticky; top: 0; z-index: 100; }
-    .logo { color: #fff; font-weight: 800; font-size: 1.25rem; text-decoration: none; }
-    .logo span { color: #818cf8; }
-    .nav-links { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
-    .nav-links a { color: #9ca3af; font-size: .9rem; text-decoration: none; }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta { background: #5c6bc0; color: #fff !important; padding: .45rem 1.1rem; border-radius: 6px; font-weight: 600; }
-    @media (max-width: 600px) { .hide-mobile { display: none; } }
-
-    .legal { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem; background: #fff; min-height: 80vh; }
-    .legal h1 { font-size: 2rem; font-weight: 800; margin-bottom: .4rem; }
-    .updated { color: #6b7280; font-size: .85rem; margin-bottom: 2.5rem; display: block; border-bottom: 1px solid #e5e7eb; padding-bottom: 1.5rem; }
-    .legal h2 { font-size: 1.2rem; font-weight: 700; margin: 2.5rem 0 .6rem; color: #111827; }
-    .legal p { color: #374151; margin-bottom: 1rem; font-size: .9375rem; }
-    .legal ul, .legal ol { margin: .5rem 0 1rem 1.5rem; }
-    .legal li { color: #374151; margin-bottom: .4rem; font-size: .9375rem; }
-    .legal strong { color: #111827; }
-    .guarantee-box { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; display: flex; gap: 1rem; align-items: flex-start; }
-    .guarantee-icon { font-size: 2rem; flex-shrink: 0; }
-    .guarantee-box h3 { font-size: 1.05rem; font-weight: 700; color: #166534; margin-bottom: .4rem; }
-    .guarantee-box p { color: #166534; margin: 0; font-size: .9rem; }
-    .contact-box { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 1.25rem; margin-top: 2rem; font-size: .9rem; color: #374151; }
-    .btn { display: inline-block; padding: .65rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: .9rem; text-decoration: none; background: #5c6bc0; color: #fff; margin-top: .5rem; }
-    .btn:hover { background: #4f5eaf; text-decoration: none; }
-
-    footer { background: #1e1e2e; color: #6b7280; padding: 2.5rem 2rem; text-align: center; }
-    .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: .75rem; flex-wrap: wrap; }
-    .footer-links a { color: #9ca3af; font-size: .85rem; text-decoration: none; }
-    .footer-links a:hover { color: #fff; }
-    .copyright { font-size: .78rem; color: #4b5563; }
-  </style>
+  <meta name="description" content="Explainly's 30-day money-back guarantee and how to request a refund." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/landing.css" />
+  <link rel="stylesheet" href="/css/legal.css" />
 </head>
 <body>
+<canvas id="starfield"></canvas>
+<div class="bg-aura"></div>
 
-<nav>
-  <a class="logo" href="/"><span>Explain</span>ly</a>
-  <ul class="nav-links">
-    <li class="hide-mobile"><a href="/">Home</a></li>
-    <li class="hide-mobile"><a href="/pricing.html">Pricing</a></li>
-    <li><a class="nav-cta" href="https://chromewebstore.google.com/search/explainly" target="_blank" rel="noopener">Add to Chrome</a></li>
-  </ul>
-</nav>
-
-<div class="legal">
-  <h1>Refund Policy</h1>
-  <span class="updated">Last updated: 22 May 2025</span>
-
-  <div class="guarantee-box">
-    <div class="guarantee-icon">↩</div>
-    <div>
-      <h3>30-Day Money-Back Guarantee</h3>
-      <p>We stand behind Explainly. If you are not satisfied with your purchase for any reason, request a full refund within 30 days and we will process it — no questions asked.</p>
+<!-- HEADER -->
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="Explainly home">
+      <img class="logo" src="/icons/logo-indigo.png" alt="Explainly logo" />
+      <span>Explainly</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/#how">How it works</a>
+      <a href="/#modes">Modes</a>
+      <a href="/#features">Features</a>
+      <a href="/#pricing">Pricing</a>
+    </nav>
+    <div class="nav-right">
+      <a class="nav-signin" id="nav-signin" href="/app/login.html">Sign in</a>
+      <button class="theme-btn" id="themeToggle" aria-label="Toggle dark / light mode">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 8.8h8M9.1 13.5 5 20.4M14.9 13.5 19 20.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Add to Chrome
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </div>
+</header>
 
-  <p>This Refund Policy applies to all paid plans of the Explainly Chrome extension: Pro, Premium, and Premium Yearly. Payments are processed by <strong>Paddle</strong> (international) or <strong>Razorpay</strong> (India).</p>
-
-  <h2>1. Eligibility for a Refund</h2>
-  <p>You are eligible for a full refund if:</p>
-  <ul>
-    <li>Your refund request is made within <strong>30 days</strong> of the original purchase date.</li>
-    <li>You have not already received a refund for a previous purchase of the same plan type.</li>
-  </ul>
-  <p>Refunds are available for all plan types:</p>
-  <ul>
-    <li><strong>Pro (monthly):</strong> Full refund within 30 days of purchase or renewal.</li>
-    <li><strong>Premium (monthly):</strong> Full refund within 30 days of purchase or renewal.</li>
-    <li><strong>Premium Yearly:</strong> Full refund within 30 days of purchase or renewal.</li>
-  </ul>
-
-  <h2>2. How to Request a Refund</h2>
-  <p>To request a refund, email us at <a href="mailto:rajaneeshg0@gmail.com">rajaneeshg0@gmail.com</a> with:</p>
-  <ol>
-    <li>The email address used for your Explainly account.</li>
-    <li>Your order or transaction ID (found in your receipt from Paddle).</li>
-    <li>The reason for your refund (optional — but helpful for improving the product).</li>
-  </ol>
-  <p>We will respond within 2 business days and process your refund through Paddle.</p>
-  <a class="btn" href="mailto:rajaneeshg0@gmail.com?subject=Refund%20Request%20-%20Explainly">Request a Refund</a>
-
-  <h2>3. Refund Processing</h2>
-  <ul>
-    <li>Refunds are processed by Paddle (international) or Razorpay (India), depending on your payment method.</li>
-    <li>Once approved, refunds typically appear within <strong>5–10 business days</strong>, depending on your bank or card issuer.</li>
-    <li>Refunds are issued to the original payment method.</li>
-    <li>Currency conversion differences (if any) are handled by Paddle and are not our responsibility.</li>
-  </ul>
-
-  <h2>4. After a Refund</h2>
-  <ul>
-    <li>Upon approval of a refund, your account will be downgraded to the Free tier.</li>
-    <li>Cloud saves and other Pro features will no longer be accessible, but your saved data will be retained for 30 days in case you resubscribe.</li>
-    <li>Monthly and yearly subscriptions will be cancelled automatically when a refund is issued.</li>
-  </ul>
-
-  <h2>5. Exceptions</h2>
-  <p>We reserve the right to deny a refund request if:</p>
-  <ul>
-    <li>The 30-day window has passed.</li>
-    <li>We have reasonable evidence of fraud or abuse (e.g., repeated refund requests across multiple accounts).</li>
-    <li>The account has been suspended for a violation of our <a href="/terms.html">Terms of Service</a>.</li>
-  </ul>
-
-  <h2>6. Free Plan</h2>
-  <p>The free plan does not involve any payment, so there is nothing to refund. If you have a question about free plan limitations, please contact us and we will be happy to help.</p>
-
-  <h2>7. Contact</h2>
-  <div class="contact-box">
-    <strong>Explainly</strong><br />
-    Developer: Rajaneesh G<br />
-    Email: <a href="mailto:rajaneeshg0@gmail.com">rajaneeshg0@gmail.com</a><br />
-    Website: <a href="https://rajaneesh12345.github.io">rajaneesh12345.github.io</a><br /><br />
-    We aim to respond to all refund requests within <strong>2 business days</strong>.
+<main class="legal-main">
+  <!-- TITLE -->
+  <div class="legal-hero">
+    <span class="eyebrow">Legal</span>
+    <h1>Refund Policy</h1>
+    <p class="lead">We stand behind Explainly. Here's exactly how refunds work and how to request one.</p>
+    <span class="legal-updated"><span class="dot"></span>Last updated: 22 May 2025</span>
+    <nav class="legal-tabs" aria-label="Legal pages">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+      <a href="/refund.html" aria-current="page">Refund Policy</a>
+    </nav>
   </div>
-</div>
 
+  <!-- DOCUMENT -->
+  <div class="legal-shell">
+    <article class="legal-card">
+      <div class="legal-guarantee">
+        <span class="g-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 5 5v1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <h3>30-Day Money-Back Guarantee</h3>
+          <p>If you are not satisfied with your purchase for any reason, request a full refund within 30 days and we will process it — no questions asked.</p>
+        </div>
+      </div>
+
+      <p>This Refund Policy applies to all paid plans of the Explainly Chrome extension: Pro, Premium, and their annual equivalents. Payments are processed by <strong>Paddle</strong> (international) or <strong>Razorpay</strong> (India).</p>
+
+      <h2>1. Eligibility for a Refund</h2>
+      <p>You are eligible for a full refund if:</p>
+      <ul>
+        <li>Your refund request is made within <strong>30 days</strong> of the original purchase date.</li>
+        <li>You have not already received a refund for a previous purchase of the same plan type.</li>
+      </ul>
+      <p>Refunds are available for all plan types:</p>
+      <ul>
+        <li><strong>Pro (monthly):</strong> Full refund within 30 days of purchase or renewal.</li>
+        <li><strong>Pro (annual):</strong> Full refund within 30 days of purchase or renewal.</li>
+        <li><strong>Premium (monthly):</strong> Full refund within 30 days of purchase or renewal.</li>
+        <li><strong>Premium (annual):</strong> Full refund within 30 days of purchase or renewal.</li>
+      </ul>
+
+      <h2>2. How to Request a Refund</h2>
+      <p>To request a refund, email us at <a href="mailto:support@unproton.com">support@unproton.com</a> with:</p>
+      <ol>
+        <li>The email address used for your Explainly account.</li>
+        <li>Your order or transaction ID (found in your receipt from Paddle or Razorpay).</li>
+        <li>The reason for your refund (optional — but helpful for improving the product).</li>
+      </ol>
+      <p>We will respond within 2 business days and process your refund through the original payment processor.</p>
+      <a class="btn btn-primary" href="mailto:support@unproton.com?subject=Refund%20Request%20-%20Explainly">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Request a Refund
+      </a>
+
+      <h2>3. Refund Processing</h2>
+      <ul>
+        <li>Refunds are processed by Paddle (international) or Razorpay (India), depending on your payment method.</li>
+        <li>Once approved, refunds typically appear within <strong>5–10 business days</strong>, depending on your bank or card issuer.</li>
+        <li>Refunds are issued to the original payment method.</li>
+        <li>Currency conversion differences (if any) are handled by the payment processor and are not our responsibility.</li>
+      </ul>
+
+      <h2>4. After a Refund</h2>
+      <ul>
+        <li>Upon approval of a refund, your account will be downgraded to the Free tier.</li>
+        <li>Cloud saves and other paid features will no longer be accessible, but your saved data will be retained for 30 days in case you resubscribe.</li>
+        <li>Monthly and annual subscriptions will be cancelled automatically when a refund is issued.</li>
+      </ul>
+
+      <h2>5. Exceptions</h2>
+      <p>We reserve the right to deny a refund request if:</p>
+      <ul>
+        <li>The 30-day window has passed.</li>
+        <li>We have reasonable evidence of fraud or abuse (e.g., repeated refund requests across multiple accounts).</li>
+        <li>The account has been suspended for a violation of our <a href="/terms.html">Terms of Service</a>.</li>
+      </ul>
+
+      <h2>6. Free Plan</h2>
+      <p>The free plan does not involve any payment, so there is nothing to refund. If you have a question about free plan limitations, please contact us and we will be happy to help.</p>
+
+      <h2>7. Contact</h2>
+      <div class="legal-contact">
+        <span class="lc-name"><img src="/icons/logo-indigo.png" alt="" />Unproton Labs · Explainly</span>
+        <span>Email: <a href="mailto:support@unproton.com">support@unproton.com</a></span>
+        <span>Website: <a href="https://unproton.com/contact">unproton.com/contact</a></span>
+        <span>We aim to respond to all refund requests within <strong>2 business days</strong>.</span>
+      </div>
+    </article>
+  </div>
+</main>
+
+<!-- FOOTER -->
 <footer>
-  <div class="footer-links">
-    <a href="/">Home</a>
-    <a href="/pricing.html">Pricing</a>
-    <a href="/privacy.html">Privacy Policy</a>
-    <a href="/terms.html">Terms of Service</a>
-    <a href="/refund.html">Refund Policy</a>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><img class="logo" src="/icons/logo-indigo.png" alt="Explainly" /><span>Explainly</span></a>
+        <p>A cognitive support layer for difficult reading. Highlight anything, understand everything.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="/#how">How it works</a>
+        <a href="/#modes">Modes</a>
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/refund.html">Refund</a>
+        <a href="/pricing.html">Full pricing</a>
+      </div>
+      <div class="foot-col">
+        <h4>Links</h4>
+        <a href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">Chrome Web Store ↗</a>
+        <a href="/app/login.html" id="foot-signin">Sign in</a>
+        <a href="/app/library.html">My Library</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="made">© 2026 Unproton Labs · Explainly</span>
+      <span>Built with ♥ for curious minds everywhere.</span>
+    </div>
   </div>
-  <p class="copyright">&copy; 2025 Explainly. All rights reserved.</p>
 </footer>
 
+<script src="/js/landing.js"></script>
 </body>
 </html>

@@ -1,238 +1,528 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent="indigo" data-hero="split" data-font="techy">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/icons/icon-192.png" type="image/png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Explainly — AI Text Explanation for the Web</title>
-  <meta name="description" content="Select any text on any webpage and get instant AI-powered explanations. ELI5, Normal, Deep, and Why? modes." />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #111827; background: #f9fafb; line-height: 1.6; }
-    a { color: #5c6bc0; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    /* Nav */
-    nav { background: #1e1e2e; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; height: 62px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
-    .logo { color: #fff; font-weight: 800; font-size: 1.25rem; text-decoration: none; letter-spacing: -.3px; }
-    .logo span { color: #818cf8; }
-    .nav-links { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
-    .nav-links a { color: #9ca3af; font-size: .9rem; text-decoration: none; transition: color .15s; }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta { background: #5c6bc0; color: #fff !important; padding: .45rem 1.1rem; border-radius: 6px; font-weight: 600; }
-    .nav-cta:hover { background: #4f5eaf; }
-    @media (max-width: 600px) { .hide-mobile { display: none; } }
-
-    /* Hero */
-    .hero { background: linear-gradient(135deg, #1e1e2e 0%, #252545 100%); color: #fff; padding: 6rem 2rem 5rem; text-align: center; }
-    .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1.15; margin-bottom: 1.25rem; }
-    .hero h1 span { color: #818cf8; }
-    .hero p { font-size: 1.15rem; color: #c4c9e2; max-width: 540px; margin: 0 auto 2.5rem; }
-    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn { display: inline-block; padding: .7rem 1.6rem; border-radius: 8px; font-weight: 600; font-size: .95rem; transition: all .2s; cursor: pointer; text-decoration: none; }
-    .btn-primary { background: #5c6bc0; color: #fff; }
-    .btn-primary:hover { background: #4f5eaf; text-decoration: none; color: #fff; }
-    .btn-ghost { background: transparent; color: #c4c9e2; border: 1.5px solid #4a4a6a; }
-    .btn-ghost:hover { background: rgba(255,255,255,.07); text-decoration: none; color: #fff; }
-    .btn-lg { padding: .85rem 2rem; font-size: 1.05rem; }
-
-    /* Badge */
-    .badge { display: inline-block; background: rgba(129,140,248,.15); color: #818cf8; border: 1px solid rgba(129,140,248,.3); border-radius: 999px; padding: .25rem .85rem; font-size: .8rem; font-weight: 600; margin-bottom: 1.2rem; letter-spacing: .5px; }
-
-    /* Sections */
-    .section { padding: 5rem 2rem; }
-    .section-alt { background: #fff; }
-    .container { max-width: 1080px; margin: 0 auto; }
-    .section-label { color: #5c6bc0; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: .5rem; }
-    .section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; margin-bottom: 1rem; }
-    .section-sub { color: #6b7280; font-size: 1.05rem; max-width: 520px; }
-
-    /* How it works */
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 3rem; }
-    .step { text-align: center; }
-    .step-num { width: 48px; height: 48px; border-radius: 50%; background: #eef0fd; color: #5c6bc0; font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
-    .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .4rem; }
-    .step p { color: #6b7280; font-size: .9rem; margin: 0; }
-
-    /* Features */
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-    .feature-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; }
-    .feature-icon { font-size: 1.6rem; margin-bottom: .75rem; }
-    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
-    .feature-card p { color: #6b7280; font-size: .875rem; margin: 0; }
-
-    /* Modes */
-    .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin-top: 2.5rem; }
-    .mode { border-radius: 10px; padding: 1.25rem; border: 1.5px solid; }
-    .mode-eli5  { background: #fff7ed; border-color: #fed7aa; }
-    .mode-normal{ background: #eef2ff; border-color: #c7d2fe; }
-    .mode-deep  { background: #faf5ff; border-color: #e9d5ff; }
-    .mode-why   { background: #f0fdf4; border-color: #bbf7d0; }
-    .mode h3 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
-    .mode-eli5 h3  { color: #c2410c; }
-    .mode-normal h3{ color: #4338ca; }
-    .mode-deep h3  { color: #7e22ce; }
-    .mode-why h3   { color: #166534; }
-    .mode p { font-size: .85rem; color: #374151; margin: 0; }
-
-    /* CTA Band */
-    .cta-band { background: linear-gradient(135deg, #1e1e2e, #252545); color: #fff; border-radius: 16px; padding: 3.5rem 2rem; text-align: center; margin: 4rem 0 2rem; }
-    .cta-band h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: .75rem; }
-    .cta-band p { color: #c4c9e2; margin-bottom: 2rem; font-size: 1rem; }
-
-    /* Footer */
-    footer { background: #1e1e2e; color: #6b7280; padding: 2.5rem 2rem; text-align: center; }
-    .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: .75rem; flex-wrap: wrap; }
-    .footer-links a { color: #9ca3af; font-size: .85rem; text-decoration: none; }
-    .footer-links a:hover { color: #fff; }
-    .copyright { font-size: .78rem; color: #4b5563; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Explainly — Understand anything you read</title>
+  <meta name="description" content="Highlight any text on the web and get instant AI explanations in four depths: ELI5, Normal, Deep, and Why? A cognitive support layer for difficult reading." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/landing.css" />
 </head>
 <body>
+<canvas id="starfield"></canvas>
+<div class="bg-aura"></div>
 
-<nav>
-  <a class="logo" href="/"><span>Explain</span>ly</a>
-  <ul class="nav-links">
-    <li class="hide-mobile"><a href="/pricing.html">Pricing</a></li>
-    <li class="hide-mobile"><a href="/privacy.html">Privacy</a></li>
-    <li class="hide-mobile"><a id="nav-signin" href="/app/login.html">Sign In</a></li>
-    <li><a class="nav-cta" href="https://chromewebstore.google.com/search/explainly" target="_blank" rel="noopener">Add to Chrome</a></li>
-  </ul>
-</nav>
-
-<!-- Hero -->
-<section class="hero">
-  <div class="badge">Chrome Extension · MV3</div>
-  <h1>Understand <span>anything</span><br>you read — instantly</h1>
-  <p>Select any text on any website. Explainly gives you a context-aware AI explanation in seconds, without leaving the page.</p>
-  <div class="hero-btns">
-    <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/search/explainly" target="_blank" rel="noopener">Add to Chrome — Free</a>
-    <a class="btn btn-ghost btn-lg" href="/pricing.html">See Pricing</a>
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="Explainly home">
+      <img class="logo" src="/icons/logo-indigo.png" alt="Explainly logo" />
+      <span>Explainly</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#how">How it works</a>
+      <a href="#modes">Modes</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+    <div class="nav-right">
+      <a class="nav-signin" id="nav-signin" href="/app/login.html">Sign in</a>
+      <button class="theme-btn" id="themeToggle" aria-label="Toggle dark / light mode">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 8.8h8M9.1 13.5 5 20.4M14.9 13.5 19 20.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Add to Chrome
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
   </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero wrap">
+
+  <!-- Variant: SPLIT (default) -->
+  <div class="hero-variant" id="hv-split">
+    <div class="hero-copy">
+      <span class="pill"><span class="dot"></span>Cognitive support for difficult reading</span>
+      <h1 class="hero-h">Understand <span class="grad-text">anything</span> you read.</h1>
+      <p class="hero-sub">Highlight text on any webpage and Explainly streams a clear explanation — at the exact depth you need.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 8.8h8M9.1 13.5 5 20.4M14.9 13.5 19 20.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Add to Chrome — Free
+        </a>
+        <a class="btn btn-ghost btn-lg" href="#pricing">See pricing</a>
+      </div>
+      <div class="hero-meta">
+        <span><span class="stars">★★★★★</span> Loved on the Chrome Web Store</span>
+        <span>•</span>
+        <span>Free plan, no card</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="orb-wrap">
+        <div class="orb-glow"></div>
+        <div class="orb-ring r1"></div>
+        <div class="orb-ring r2"></div>
+        <img class="orb-img logo" src="/icons/logo-indigo.png" alt="Explainly" />
+        <div class="orb-badge b1"><span class="k"></span>ELI5 · Normal</div>
+        <div class="orb-badge b2"><span class="k"></span>Deep · Why?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variant: ORB centered (mobile fallback) -->
+  <div class="hero-variant" id="hv-orb">
+    <div class="orb-wrap sm">
+      <div class="orb-glow"></div>
+      <div class="orb-ring r1"></div>
+      <div class="orb-ring r2"></div>
+      <img class="orb-img logo" src="/icons/logo-indigo.png" alt="Explainly" />
+    </div>
+    <span class="pill"><span class="dot"></span>Powered by streaming AI</span>
+    <h1 class="hero-h">Understand <span class="grad-text">anything</span> you read.</h1>
+    <p class="hero-sub">Highlight any text on the web and get an instant explanation in four depths — ELI5, Normal, Deep, and Why? Your personal reading companion, everywhere you browse.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">Add to Chrome — Free</a>
+      <a class="btn btn-ghost btn-lg" href="#pricing">See pricing</a>
+    </div>
+    <div class="hero-meta">
+      <span><span class="stars">★★★★★</span> On the Chrome Web Store</span>
+      <span>•</span><span>Works on any webpage</span>
+    </div>
+  </div>
+
 </section>
 
-<!-- How it works -->
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-label">How it works</div>
-    <h2 class="section-title">Three steps to clarity</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Select any text</h3>
-        <p>Highlight any word, sentence, or paragraph on any webpage — up to 600 characters.</p>
+<!-- ============ HOW IT WORKS ============ -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">How it works</span>
+      <h2 class="title">Three steps. Zero friction.</h2>
+      <p class="lead">No new tabs, no copy-paste. Explainly lives right inside the page you're reading.</p>
+    </div>
+    <div class="how-grid">
+      <div class="steps">
+        <article class="step reveal" data-d="1">
+          <span class="step-n">01</span>
+          <div class="step-ic">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h10M4 10h7M4 15h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="9" y="11.5" width="9" height="4" rx="1" fill="currentColor" opacity=".25"/><path d="M9 11.5h9v4H9z" stroke="currentColor" stroke-width="1.8"/></svg>
+          </div>
+          <h3>Highlight any text</h3>
+          <p>Select a word, sentence, or whole paragraph on any site — articles, docs, PDFs, research papers.</p>
+        </article>
+        <article class="step reveal" data-d="2">
+          <span class="step-n">02</span>
+          <div class="step-ic">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v3M12 18v3M5 12H2M22 12h-3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="3.4" stroke="currentColor" stroke-width="1.8"/></svg>
+          </div>
+          <h3>Pick a depth</h3>
+          <p>Tap ELI5, Normal, Deep, or Why? — switch modes anytime to go shallower or deeper.</p>
+        </article>
+        <article class="step reveal" data-d="3">
+          <span class="step-n">03</span>
+          <div class="step-ic">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2 6 4-12 2 6h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Read it stream in</h3>
+          <p>A clear explanation appears in a popup, streaming word-by-word. Save it, hear it, or move on.</p>
+        </article>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Click or press Alt+E</h3>
-        <p>A small button appears near your selection. Click it, or press Alt+E for an instant popup.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Read the explanation</h3>
-        <p>The AI streams back a meaning, tone, and simplified rewrite — in the depth you choose.</p>
+
+      <div class="mock reveal" data-sim style="max-width:680px;margin-inline:auto;width:100%">
+        <div class="mock-bar">
+          <div class="mock-dots"><i></i><i></i><i></i></div>
+          <div class="mock-url">
+            <svg viewBox="0 0 24 24" width="13" fill="none" style="opacity:.6"><path d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z" stroke="currentColor" stroke-width="1.8"/></svg>
+            nature.com/articles/biology-of-aging
+          </div>
+        </div>
+        <div class="mock-body">
+          <p>Senescent cells accumulate with age and secrete a cocktail of inflammatory signals known as <span class="hl">the senescence-associated secretory phenotype</span>, which can drive tissue dysfunction in nearby healthy cells.</p>
+          <div class="exp-launch"><img src="/icons/icon16.png" alt="" /></div>
+          <div class="exp-pop" data-cycle='[{"mode":"ELI5 mode","i":0,"text":"Old, worn-out cells start shouting alarm signals. Those signals stress out the healthy cells around them — like one grumpy neighbor upsetting the whole street."},{"mode":"Normal mode","i":1,"text":"As cells get old and stop dividing, they don’t go quiet — they release inflammatory molecules that damage healthy neighbors and speed up aging in the surrounding tissue."},{"mode":"Deep mode","i":2,"text":"Senescent cells adopt the SASP: a pro-inflammatory secretome of cytokines, chemokines and proteases that remodels the tissue microenvironment and spreads senescence to bystander cells."},{"mode":"Why? mode","i":3,"text":"This phrase is hard because the jargon ‘senescence-associated secretory phenotype’ is crammed into one noun, and it assumes you know aged cells stay active and harmful instead of just dying off."}]'>
+            <div class="exp-head">
+              <img class="logo" src="/icons/logo-indigo.png" alt="" />
+              <b>Explainly</b>
+              <span class="exp-tabs"><i class="on"></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="exp-mode">ELI5 mode</div>
+            <div class="exp-text" data-text="Old, worn-out cells start shouting alarm signals. Those signals stress out the healthy cells around them — like one grumpy neighbor upsetting the whole street."></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Depth modes -->
-<section class="section">
-  <div class="container">
-    <div class="section-label">Explanation depth</div>
-    <h2 class="section-title">Four modes, one shortcut</h2>
-    <p class="section-sub">Switch modes with a single click. The last mode you used is remembered.</p>
-    <div class="modes">
-      <div class="mode mode-eli5">
-        <h3>ELI5</h3>
-        <p>Explain Like I'm 5. Quick, simplified — perfect for unfamiliar concepts.</p>
+<!-- ============ MODES ============ -->
+<section class="sec" id="modes">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Four explanation modes</span>
+      <h2 class="title">One highlight, <span class="grad-text">four depths</span>.</h2>
+      <p class="lead">The same sentence, explained for whoever you are right now — a curious beginner or a careful researcher. Try it live.</p>
+    </div>
+
+    <div class="modes-panel reveal">
+      <div class="modes-tabs" id="modeTabs" role="tablist" aria-label="Explanation modes">
+        <button class="mode-tab" role="tab" data-mode="eli5" aria-selected="false">
+          <span class="mt-top">
+            <span class="mt-ic">
+              <svg viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg>
+            </span>
+            <b>ELI5</b>
+          </span>
+          <small>Explain like I'm 5 — simple, playful analogies.</small>
+        </button>
+        <button class="mode-tab" role="tab" data-mode="normal" aria-selected="true">
+          <span class="mt-top">
+            <span class="mt-ic">
+              <svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg>
+            </span>
+            <b>Normal</b>
+          </span>
+          <small>Clear, everyday language for a quick grasp.</small>
+        </button>
+        <button class="mode-tab" role="tab" data-mode="deep" aria-selected="false">
+          <span class="mt-top">
+            <span class="mt-ic">
+              <svg viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5-10-5ZM2 13l10 5 10-5M2 17.5l10 5 10-5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>
+            </span>
+            <b>Deep</b>
+          </span>
+          <small>Rigorous, technical, no hand-waving.</small>
+        </button>
+        <button class="mode-tab" role="tab" data-mode="why" aria-selected="false">
+          <span class="mt-top">
+            <span class="mt-ic">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M9.2 9.3a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2.2-2.6 4M12 17.2h.01" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
+            </span>
+            <b>Why?</b>
+          </span>
+          <small>Why is the passage hard to understand?</small>
+        </button>
       </div>
-      <div class="mode mode-normal">
-        <h3>Normal</h3>
-        <p>Everyday reading level. The default mode for most use cases.</p>
-      </div>
-      <div class="mode mode-deep">
-        <h3>Deep</h3>
-        <p>Academic and literary analysis. Full interpretation of meaning and subtext.</p>
-      </div>
-      <div class="mode mode-why">
-        <h3>Why?</h3>
-        <p>Why did the author write this line? Authorial intent and context.</p>
+
+      <div class="modes-stage">
+        <div class="modes-src">
+          <div class="lbl">You highlighted</div>
+          <p class="src-quote">"The measurement of one entangled particle <span class="sel">instantaneously influences the state of its partner</span>, regardless of the distance between them."</p>
+        </div>
+        <div class="modes-out">
+          <div class="out-head">
+            <span class="oh-ic" id="ohIc"></span>
+            <span class="oh-t"><b id="ohName">Normal</b><span id="ohTag">Clear, everyday language</span></span>
+          </div>
+          <div class="out-stream" id="outStream" aria-live="polite"></div>
+          <div class="out-foot">
+            <span class="chip">
+              <svg viewBox="0 0 24 24" width="13" fill="none"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+              Streaming
+            </span>
+            <span class="chip">Adapts to page theme</span>
+            <button class="tts-btn" id="ttsBtn">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a3.5 3.5 0 0 1 0 6M18.5 6.5a7 7 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Listen
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Features -->
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-label">Features</div>
-    <h2 class="section-title">Everything you need</h2>
-    <div class="features">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Streaming AI responses</h3>
-        <p>Explanations stream token-by-token so you start reading before the response is complete.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🌙</div>
-        <h3>Auto dark / light theme</h3>
-        <p>The popup automatically matches the background of the page you're reading. Five dark palettes to choose from.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔖</div>
-        <h3>Save explanations</h3>
-        <p>Save to cloud (synced across devices) or locally on your machine. Search and filter your library.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📄</div>
+<!-- ============ FEATURES ============ -->
+<section class="sec" id="features">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Features</span>
+      <h2 class="title">Built for serious reading.</h2>
+      <p class="lead">Intellectually deep, operationally lightweight — everything you need to stay in flow.</p>
+    </div>
+    <div class="feat-grid">
+      <article class="feat reveal" data-d="1">
+        <div class="feat-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Streaming AI</h3>
+        <p>Explanations appear word-by-word the instant you ask — no spinners, no waiting for the whole answer.</p>
+        <span class="tag">Real-time</span>
+      </article>
+      <article class="feat reveal" data-d="2">
+        <div class="feat-ic">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 3a9 9 0 0 0 0 18Z" fill="currentColor" opacity=".25"/><path d="M12 3v18" stroke="currentColor" stroke-width="1.7"/></svg>
+        </div>
+        <h3>Theme adaptive</h3>
+        <p>Explainly reads the page around it and matches — light, dark, or anything in between. Always legible, never jarring.</p>
+        <span class="tag">Light · Dark</span>
+      </article>
+      <article class="feat reveal" data-d="3">
+        <div class="feat-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 3h9l4 4v14H6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M15 3v4h4M9 13l2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Saved library</h3>
+        <p>Keep the explanations worth remembering. Build a personal library you can search and revisit anytime.</p>
+        <span class="tag">Searchable</span>
+      </article>
+      <article class="feat reveal" data-d="1">
+        <div class="feat-ic">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
         <h3>Built-in PDF viewer</h3>
-        <p>PDFs open in Explainly's viewer with full text selection and AI explanation support.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔊</div>
+        <p>Open PDFs right inside Explainly and highlight to explain — the same flow that works everywhere else on the web.</p>
+        <span class="tag">PDF-native</span>
+      </article>
+      <article class="feat reveal" data-d="2">
+        <div class="feat-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a3.5 3.5 0 0 1 0 6M18.5 6.5a7 7 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
         <h3>Text-to-speech</h3>
-        <p>Listen to any selected text aloud using your browser's built-in speech synthesis.</p>
+        <p>Prefer to listen? Have any explanation read aloud in a natural voice — perfect for long sessions and resting your eyes.</p>
+        <span class="tag">Natural voice</span>
+      </article>
+      <article class="feat reveal" data-d="3">
+        <div class="feat-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 6v6c0 4.5 3.2 7.6 8 9 4.8-1.4 8-4.5 8-9V6l-8-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Private by design</h3>
+        <p>Explainly never stores what you highlight — only the explanations you choose to save. Everything is encrypted in transit, never sold, and deletable anytime.</p>
+        <span class="tag">Nothing stored by default</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Pricing</span>
+      <h2 class="title">Start free. Upgrade when it clicks.</h2>
+      <p class="lead">Every plan includes the highlight-to-explain core. Pay only when you want more depth and room.</p>
+      <div style="margin-top:28px">
+        <div class="price-toggle" id="priceSeg">
+          <span class="thumb"></span>
+          <button data-period="monthly" class="on">Monthly</button>
+          <button data-period="annual">Annual</button>
+        </div>
+        <div class="save-tag">Save up to 37% with annual billing</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Privacy first</h3>
-        <p>No browsing history stored. No page URLs logged. Anonymous users have zero data sent to servers.</p>
+    </div>
+
+    <div class="tiers">
+
+      <!-- FREE -->
+      <article class="tier reveal" data-d="1">
+        <h3>Free</h3>
+        <p class="desc">For casual reading and trying things out.</p>
+        <div class="price"><span class="cur">₹</span><span class="amt">0</span><span class="per">/forever</span></div>
+        <div class="price-sub">No card required</div>
+        <a class="btn btn-ghost" href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">Add to Chrome</a>
+        <ul>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ELI5 &amp; Normal: 10 explains/day
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Deep &amp; Why?: 1/day (sign-in)
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            5 anonymous uses before sign-in
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Auto dark / light theme
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Local library (50 saves)
+          </li>
+          <li class="off">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Cloud saves &amp; PDF viewer
+          </li>
+        </ul>
+      </article>
+
+      <!-- PRO -->
+      <article class="tier pop reveal" data-d="2">
+        <span class="tier-badge">Most popular</span>
+        <h3>Pro</h3>
+        <p class="desc">For everyday learners and curious minds.</p>
+        <div class="price"><span class="cur">₹</span><span class="amt" data-m="149" data-a="120">149</span><span class="per">/mo</span></div>
+        <div class="price-sub" data-sub-m="₹149/mo · $4.99/mo" data-sub-a="₹1,440 billed yearly">₹149/mo · $4.99/mo</div>
+        <a class="btn btn-primary" href="/app/upgrade.html">Get Pro</a>
+        <ul>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            All four modes (ELI5, Normal, Deep, Why?)
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            100 explains/day + 10 Deep &amp; Why?/day
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            PDF viewer included
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Cloud saves (unlimited)
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Text-to-speech
+          </li>
+          <li class="off">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Priority queue &amp; premium AI
+          </li>
+        </ul>
+      </article>
+
+      <!-- PREMIUM -->
+      <article class="tier reveal" data-d="3">
+        <h3>Premium</h3>
+        <p class="desc">For power readers, students &amp; researchers.</p>
+        <div class="price"><span class="cur">₹</span><span class="amt" data-m="399" data-a="250">399</span><span class="per">/mo</span></div>
+        <div class="price-sub" data-sub-m="₹399/mo · $11.99/mo" data-sub-a="₹2,999 billed yearly">₹399/mo · $11.99/mo</div>
+        <a class="btn btn-ghost" href="/app/upgrade.html">Get Premium</a>
+        <ul>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Everything in Pro
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            500 explains/day + 75 Deep &amp; Why?/day
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            PDF viewer (large context)
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Priority queue
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Future premium AI models
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Priority support
+          </li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Comparison table -->
+    <div class="compare reveal open" id="compare">
+      <div class="cmp-toggle" id="cmpToggle">
+        <span>Compare all features</span>
+        <svg viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="cmp-wrap"><div class="cmp-inner"><div class="cmp-scroll">
+        <table class="cmp">
+          <thead>
+            <tr><th>Feature</th><th>Free</th><th class="colpop">Pro</th><th>Premium</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Price (monthly)</th><td>₹0 / $0</td><td class="colpop">₹149/mo · $4.99</td><td>₹399/mo · $11.99</td></tr>
+            <tr><th scope="row">Price (annual)</th><td>—</td><td class="colpop">₹1,440/yr · ₹120/mo</td><td>₹2,999/yr · ₹250/mo</td></tr>
+            <tr><th scope="row">ELI5 &amp; Normal/day</th><td>10</td><td class="colpop">100</td><td>500</td></tr>
+            <tr><th scope="row">Deep mode</th><td>1/day <small style="opacity:.7">(sign-in)</small></td><td class="colpop">10/day</td><td>75/day</td></tr>
+            <tr><th scope="row">Why? mode</th><td>1/day <small style="opacity:.7">(sign-in)</small></td><td class="colpop">10/day</td><td>75/day</td></tr>
+            <tr><th scope="row">PDF viewer</th><td class="no">—</td><td class="colpop yes">✓</td><td class="yes">✓ Large context</td></tr>
+            <tr><th scope="row">Cloud saves</th><td class="no">—</td><td class="colpop yes">✓ Unlimited</td><td class="yes">✓ Unlimited</td></tr>
+            <tr><th scope="row">Local library</th><td>50 saves</td><td class="colpop yes">✓</td><td class="yes">✓</td></tr>
+            <tr><th scope="row">Priority queue</th><td class="no">—</td><td class="colpop no">—</td><td class="yes">✓</td></tr>
+            <tr><th scope="row">Premium AI models</th><td class="no">—</td><td class="colpop no">—</td><td class="yes">✓ As released</td></tr>
+            <tr><th scope="row">Streaming AI</th><td class="yes">✓</td><td class="colpop yes">✓</td><td class="yes">✓</td></tr>
+            <tr><th scope="row">Text-to-speech</th><td class="yes">✓</td><td class="colpop yes">✓</td><td class="yes">✓</td></tr>
+            <tr><th scope="row">Theme adaptive</th><td class="yes">✓</td><td class="colpop yes">✓</td><td class="yes">✓</td></tr>
+            <tr><th scope="row">Support</th><td>Community</td><td class="colpop">Email</td><td>Priority</td></tr>
+          </tbody>
+        </table>
+      </div></div></div>
+    </div>
+
+    <p style="text-align:center;margin-top:28px;font-size:13.5px;color:var(--ink-3)">
+      Payments via <strong style="color:var(--ink-2)">Razorpay</strong> (India · UPI, cards, net banking) &amp; <strong style="color:var(--ink-2)">Paddle</strong> (International · cards, PayPal). Region auto-detected. &nbsp;·&nbsp; <a href="/pricing.html" style="color:var(--a-glow)">Full pricing page →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <span class="eyebrow" style="justify-content:center">Ready when you are</span>
+      <h2>Stop re-reading. <span class="grad-text">Start understanding.</span></h2>
+      <p>Add Explainly to Chrome and turn every difficult page into a conversation you can actually follow.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 8.8h8M9.1 13.5 5 20.4M14.9 13.5 19 20.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Add to Chrome — Free
+        </a>
+        <a class="btn btn-ghost btn-lg" href="#pricing">See pricing</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="section">
-  <div class="container">
-    <div class="cta-band">
-      <h2>Start for free today</h2>
-      <p>5 free explanations per day, no credit card required. Upgrade any time for unlimited access.</p>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-        <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/search/explainly" target="_blank" rel="noopener">Add to Chrome — Free</a>
-        <a class="btn btn-ghost btn-lg" href="/pricing.html">View Pricing</a>
-      </div>
-    </div>
-  </div>
-</section>
+</main>
 
+<!-- ============ FOOTER ============ -->
 <footer>
-  <div class="footer-links">
-    <a href="/pricing.html">Pricing</a>
-    <a href="/privacy.html">Privacy Policy</a>
-    <a href="/terms.html">Terms of Service</a>
-    <a href="/refund.html">Refund Policy</a>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><img class="logo" src="/icons/logo-indigo.png" alt="Explainly" /><span>Explainly</span></a>
+        <p>A cognitive support layer for difficult reading. Highlight anything, understand everything.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#how">How it works</a>
+        <a href="#modes">Modes</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/refund.html">Refund</a>
+        <a href="/pricing.html">Full pricing</a>
+      </div>
+      <div class="foot-col">
+        <h4>Links</h4>
+        <a href="https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb" target="_blank" rel="noopener">Chrome Web Store ↗</a>
+        <a href="/app/login.html" id="foot-signin">Sign in</a>
+        <a href="/app/library.html">My Library</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="made">© 2026 Unproton Labs · Explainly</span>
+      <span>Built with ♥ for curious minds everywhere.</span>
+    </div>
   </div>
-  <p class="copyright">&copy; 2025 Explainly. All rights reserved.</p>
 </footer>
 
-<script>
-  var link = document.getElementById('nav-signin');
-  if (localStorage.getItem('explainly_token')) {
-    link.textContent = 'My Library';
-    link.href = '/app/library.html';
-  }
-</script>
+<script src="/js/landing.js"></script>
 </body>
 </html>
