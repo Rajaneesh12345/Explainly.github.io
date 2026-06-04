@@ -7,6 +7,7 @@ ruvector.db
 
 # Claude Code session data
 .claude/
+claude.md
 
 # Jekyll build output
 _site/

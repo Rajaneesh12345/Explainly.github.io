@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-accent="indigo" data-font="techy" data-card="elevated" data-radius="rounded">
+<html lang="en" data-theme="dark" data-accent="indigo" data-font="humanist" data-card="elevated" data-radius="rounded">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/icons/icon-192.png" type="image/png" />
@@ -37,10 +37,10 @@
 
   <!-- Sidebar (desktop) -->
   <aside class="sidebar">
-    <div class="side-brand">
+    <a class="side-brand" href="/">
       <img class="brand-logo" src="/icons/logo-indigo.png" alt="" />
       <span><span class="lite">Explain</span>ly</span>
-    </div>
+    </a>
     <nav class="side-nav">
       <a class="side-link" href="/app/library.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16l-8-4-8 4V5Z"/></svg>
@@ -69,7 +69,7 @@
 
   <!-- Top bar (mobile) -->
   <header class="topbar">
-    <a class="brand" href="/app/library.html">
+    <a class="brand" href="/">
       <img class="brand-logo" src="/icons/logo-indigo.png" alt="" />
       <span><span class="lite">Explain</span>ly</span>
     </a>
@@ -181,33 +181,39 @@
   var PLANS = [
     {
       id: 'free', name: 'Free', tag: 'For the occasional reader', featured: false,
-      monthly: { cur: '$', amt: '0',     per: '/mo', usd: 'Free forever' },
-      annual:  { cur: '$', amt: '0',     per: '/yr', usd: 'Free forever' },
-      features: ['20 explains / day', '3 Deep · 3 Why? / day', 'Local saves (50)', { off: 'PDF viewer' }, { off: 'Cloud sync' }],
+      monthly:     { cur: '$', amt: '0', per: '/mo', sub: 'Free forever' },
+      annual:      { cur: '$', amt: '0', per: '/yr', sub: 'Free forever' },
+      monthly_inr: { cur: '₹', amt: '0', per: '/mo', sub: 'Free forever' },
+      annual_inr:  { cur: '₹', amt: '0', per: '/yr', sub: 'Free forever' },
+      features: ['15 explains / day', '2 Deep · 1 Why? / day', 'Local saves (50)', { off: 'PDF viewer' }, { off: 'Cloud sync' }],
     },
     {
       id: 'pro', name: 'Pro', tag: 'For regular readers', featured: false,
-      monthly: { cur: '$', amt: '4.99',  per: '/mo', usd: '₹149 / month' },
-      annual:  { cur: '$', amt: '3.33',  per: '/mo', usd: '$39.99 / year' },
-      features: ['100 explains / day', '10 Deep · 10 Why? / day', 'PDF viewer', 'Cloud sync (unlimited)'],
+      monthly:     { cur: '$', amt: '4.99', per: '/mo', sub: '₹149 / month' },
+      annual:      { cur: '$', amt: '3.33', per: '/mo', sub: '$39.99 / year' },
+      monthly_inr: { cur: '₹', amt: '149',  per: '/mo', sub: '$4.99 / month' },
+      annual_inr:  { cur: '₹', amt: '120',  per: '/mo', sub: '₹1,440 / year', save: 'Save ~20%' },
+      features: ['100 explains / day', '10 Deep · 10 Why? / day', 'PDF viewer', 'Cloud saves (500)', 'Email support'],
     },
     {
       id: 'premium', name: 'Premium', tag: 'For power users', featured: true, badge: 'Most popular',
-      monthly: { cur: '$', amt: '11.99', per: '/mo', usd: '₹399 / month' },
-      annual:  { cur: '$', amt: '8.25',  per: '/mo', usd: '$99 / year', save: 'Save ~37%' },
-      features: ['500 explains / day', '75 Deep · 75 Why? / day', 'Everything in Pro', 'Priority queue', 'Premium AI models'],
+      monthly:     { cur: '$', amt: '11.99', per: '/mo', sub: '₹399 / month' },
+      annual:      { cur: '$', amt: '8.25',  per: '/mo', sub: '$99 / year', save: 'Save ~37%' },
+      monthly_inr: { cur: '₹', amt: '399',   per: '/mo', sub: '$11.99 / month' },
+      annual_inr:  { cur: '₹', amt: '250',   per: '/mo', sub: '₹2,999 / year', save: 'Save ~37%' },
+      features: ['500 explains / day', '75 Deep · 75 Why? / day', 'Everything in Pro', 'Cloud saves (2,500)', 'Priority queue', 'Premium AI models'],
     },
   ];
 
   var CMP_ROWS = [
-    { label: 'Explains / day',     free: '20',  pro: '100', premium: '500' },
-    { label: 'Deep mode / day',    free: '3',   pro: '10',  premium: '75'  },
-    { label: 'Why? mode / day',    free: '3',   pro: '10',  premium: '75'  },
-    { label: 'Saved explanations', free: '50',  pro: '∞',   premium: '∞'   },
-    { label: 'Cloud sync',         free: false, pro: true,  premium: true  },
-    { label: 'PDF viewer',         free: false, pro: true,  premium: true  },
-    { label: 'Priority queue',     free: false, pro: false, premium: true  },
-    { label: 'Premium AI models',  free: false, pro: false, premium: true  },
+    { label: 'Explains / day',     free: '15',   pro: '100',   premium: '500'   },
+    { label: 'Deep mode / day',    free: '2',    pro: '10',    premium: '75'    },
+    { label: 'Why? mode / day',    free: '1',    pro: '10',    premium: '75'    },
+    { label: 'Saved explanations', free: '50',   pro: '500',   premium: '2,500' },
+    { label: 'Cloud sync',         free: false,  pro: true,    premium: true    },
+    { label: 'PDF viewer',         free: false,  pro: true,    premium: true    },
+    { label: 'Priority queue',     free: false,  pro: false,   premium: true    },
+    { label: 'Premium AI models',  free: false,  pro: false,   premium: true    },
   ];
 
   // ── Paddle init ───────────────────────────────────────
@@ -266,8 +272,8 @@
     document.getElementById('btn-paddle').classList.toggle('active',   _provider === 'paddle');
   }
 
-  document.getElementById('btn-razorpay').addEventListener('click', function () { _provider = 'razorpay'; updateProviderUI(); });
-  document.getElementById('btn-paddle').addEventListener('click',   function () { _provider = 'paddle';   updateProviderUI(); });
+  document.getElementById('btn-razorpay').addEventListener('click', function () { _provider = 'razorpay'; updateProviderUI(); renderPlans(); });
+  document.getElementById('btn-paddle').addEventListener('click',   function () { _provider = 'paddle';   updateProviderUI(); renderPlans(); });
 
   // ── Billing toggle ────────────────────────────────────
   document.getElementById('bill-toggle').addEventListener('click', function (e) {
@@ -290,7 +296,8 @@
   // ── Plans ─────────────────────────────────────────────
   function renderPlans() {
     document.getElementById('plans').innerHTML = PLANS.map(function (pl) {
-      var pr        = pl[_period];
+      var prKey = _period + (_provider === 'razorpay' ? '_inr' : '');
+      var pr    = pl[prKey] || pl[_period];
       var isCurrent = pl.id === _currentTier;
       var badge = '';
       if (isCurrent)                              badge = '<div class="plan-badge current">Current plan</div>';
@@ -313,7 +320,7 @@
         '<div class="plan-name">' + pl.name + '</div>' +
         '<div class="plan-tag">' + pl.tag + '</div>' +
         '<div class="plan-price"><span class="cur">' + pr.cur + '</span><span class="amt">' + pr.amt + '</span><span class="per">' + pr.per + '</span></div>' +
-        '<div class="plan-usd">' + pr.usd + '</div>' +
+        '<div class="plan-usd">' + pr.sub + '</div>' +
         '<ul>' + feats + '</ul>' +
         '<div class="plan-spacer"></div>' +
         cta +
@@ -434,15 +441,15 @@
       '<thead><tr>' +
         '<th scope="col" style="text-align:left">Feature</th>' +
         '<th scope="col">Free</th>' +
-        '<th scope="col" class="colpop">Premium</th>' +
         '<th scope="col">Pro</th>' +
+        '<th scope="col" class="colpop">Premium</th>' +
       '</tr></thead>' +
       '<tbody>' + CMP_ROWS.map(function (r) {
         return '<tr>' +
           '<th scope="row">' + r.label + '</th>' +
           '<td>' + cell(r.free) + '</td>' +
-          '<td class="colpop">' + cell(r.premium) + '</td>' +
           '<td>' + cell(r.pro) + '</td>' +
+          '<td class="colpop">' + cell(r.premium) + '</td>' +
         '</tr>';
       }).join('') + '</tbody>';
   }

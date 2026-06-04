@@ -20,8 +20,8 @@ var PADDLE_PRICE_IDS = {
 };
 
 var TIER_LIMITS = {
-	free: { daily: 10, deep: 1, why: 1 },
-	pro: { daily: 100, deep: 10, why: 10 },
+	free:    { daily: 15,  deep: 2,  why: 1  },
+	pro:     { daily: 100, deep: 10, why: 10 },
 	premium: { daily: 500, deep: 75, why: 75 },
 };
 

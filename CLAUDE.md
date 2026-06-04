@@ -88,7 +88,7 @@ Now uses the **same token system as System 1** (migrated June 2026 from `Explain
   - `data-font="techy|humanist|rounded"` — swaps `--display` font family
   - `data-card="elevated|outline|glass"` — card surface style
   - `data-radius="sharp|rounded|soft"` — corner radius scale via `--r`
-- Defaults: `data-theme="dark" data-accent="indigo" data-font="techy" data-card="elevated" data-radius="rounded"`
+- Defaults: `data-theme="dark" data-accent="indigo" data-font="humanist" data-card="elevated" data-radius="rounded"`
 - Background layers: same `<canvas id="starfield">` + `.bg-aura` pattern as landing
 - **App shell layout**: `.app-shell` flex container — `.sidebar` (desktop, sticky) + `.topbar` + `.tabbar` (mobile)
 - **Tweaks persistence**: `localStorage` key `explainly-app-tweaks` (JSON object, all 5 keys)
@@ -159,8 +159,19 @@ Always use `js/config.js → TIER_LIMITS` for feature limits. Pricing amounts:
 | Plan | Monthly | Annual |
 |---|---|---|
 | Free | ₹0 / $0 | — |
-| Pro | ₹149/mo · $4.99/mo | ₹1,440/yr · ₹120/mo effective |
-| Premium | ₹399/mo · $11.99/mo | ₹2,999/yr · ₹250/mo effective |
+| Pro | ₹149/mo · $4.99/mo | ₹1,440/yr (₹120/mo) |
+| Premium | ₹399/mo · $11.99/mo | ₹2,999/yr (₹250/mo) |
+
+**Tier limits (source of truth — `js/config.js → TIER_LIMITS`):**
+
+| | Free | Pro | Premium |
+|---|---|---|---|
+| Explains / day | 15 | 100 | 500 |
+| Deep / day | 2 | 10 | 75 |
+| Why? / day | 1 | 10 | 75 |
+| Saved explanations | 50 (local) | 500 (cloud) | 2,500 (cloud) |
+
+**No "unlimited" anywhere** — all caps are explicit numbers. Do not re-introduce "unlimited" in any UI copy.
 
 ---
 
@@ -169,9 +180,21 @@ Always use `js/config.js → TIER_LIMITS` for feature limits. Pricing amounts:
 1. User clicks "Sign in with Google" → `signInWithGoogle()` → Supabase OAuth
 2. Google redirects to `/auth/callback.html`
 3. Callback exchanges code → stores `explainly_token`, `explainly_refresh`, `explainly_email` in `localStorage`
-4. Redirects to `/app/account.html` (or `?next=` param)
+4. Redirects to `/app/library.html` (or `?next=` param)
 5. API calls use `apiFetch()` which attaches `Authorization: Bearer <token>`
 6. On 401: auto-refresh via `BACKEND_URL/api/auth/refresh`
+
+### Supabase OAuth redirect URL allowlist
+`signInWithGoogle()` uses `redirectTo: window.location.origin + '/auth/callback.html'`. Supabase **ignores** this if the URL isn't whitelisted — it falls back to the configured Site URL instead.
+
+**Required entries in Supabase Dashboard → Authentication → URL Configuration → Redirect URLs:**
+```
+http://localhost:5500/**
+http://localhost:5500/auth/callback.html
+https://explainly.github.io/**
+https://explainly.github.io/auth/callback.html
+```
+If OAuth redirects to the wrong URL (e.g. `localhost:3000`), the Site URL in Supabase dashboard is the culprit — add the correct local/prod URL to the Redirect URLs allowlist.
 
 ---
 
@@ -181,6 +204,18 @@ Always use `js/config.js → TIER_LIMITS` for feature limits. Pricing amounts:
 - `.nojekyll` present → Jekyll processes `_config.yml` but ignores `_` prefixed dirs
 - `_redirects` file present (Netlify/Cloudflare Pages syntax — may be legacy)
 - PWA manifest at `manifest.json`
+
+### Local development (Live Server)
+The project lives inside a subfolder `Explainly.github.io/` of the workspace. Live Server must be pointed at that subfolder or all absolute paths (`/css/`, `/js/`, `/icons/`) will 404.
+
+`.vscode/settings.json` (at workspace root `/workspaces/codespaces-blank/`) is already configured:
+```json
+{
+  "liveServer.settings.root": "/Explainly.github.io",
+  "liveServer.settings.port": 5500
+}
+```
+**After any VS Code restart**, click the Live Server status bar item from inside a file in `Explainly.github.io/`. The site then serves at `http://localhost:5500/`.
 
 ---
 
@@ -214,14 +249,22 @@ All `app/*.html` pages were migrated to the new design system in June 2026 (sour
 ### app/account.html
 - Stats grid shows live data from `fetchUsage()` — returns `{tier, usage_today, usage_deep_today, usage_why_today}`
 - Streak and 7-day chart are **not shown** — data not available from the API
-- Settings (depth preference, toggles) persist in `localStorage` key `explainly-settings`
-- Tweaks panel is available here via "Open Tweaks" button in Settings section
+- Settings persist in `localStorage` key `explainly-settings` AND sync to Supabase `user_settings` table on Save
+- Tweaks panel available via "Open Tweaks" button in Settings section (`#tweaks-root` + `#open-tweaks-btn`)
+- **Settings defaults** (hardcoded as `DEFAULT_SETTINGS` in inline JS):
+  - `defaultDepth`: `"normal"`
+  - `autosave`: `false`
+  - `tts`: `true`
+  - `reminder`: `false`
+- On load: sets Supabase session from stored tokens, fetches `user_settings` row, merges over localStorage defaults
+- "Save" button (`#save-settings-btn`): upserts `{user_id, settings, updated_at}` to `user_settings` table
 
 ### app/upgrade.html
 - `#tweaks-root` is **not present** on this page (tweaks only on account)
 - Billing toggle (Monthly / Annual) animates `.thumb` slider within `#bill-toggle`
-- Plan cards rendered dynamically by `renderPlans()` — re-runs on billing period change and after upgrade poll
-- Comparison table column order: Free | Premium (highlighted) | Pro
+- Plan cards rendered dynamically by `renderPlans()` — re-runs on billing period OR provider change, and after upgrade poll
+- **Provider-aware pricing**: PLANS data has both `monthly`/`annual` (USD, Paddle) and `monthly_inr`/`annual_inr` (INR, Razorpay) keys. `renderPlans()` picks the right one via `_period + (_provider === 'razorpay' ? '_inr' : '')`. Switching between Razorpay/Paddle immediately re-renders prices.
+- Comparison table column order: **Free | Pro | Premium** (Premium highlighted with `colpop`)
 
 ---
 
@@ -232,6 +275,75 @@ All `app/*.html` pages were migrated to the new design system in June 2026 (sour
 - **Contact page**: https://unproton.com/contact
 - **CWS link**: https://chromewebstore.google.com/detail/explainly/fbajmbncecpiklnaekpfpkcmieimfcpb
 - **Copyright**: © 2026 Unproton Labs · Explainly
+
+---
+
+## Supabase tables
+
+### `user_settings`
+Stores per-user app settings synced from `app/account.html`.
+
+```sql
+create table user_settings (
+  user_id    uuid primary key references auth.users(id) on delete cascade,
+  settings   jsonb not null default '{}',
+  updated_at timestamptz default now()
+);
+alter table user_settings enable row level security;
+create policy "Users can manage own settings"
+  on user_settings for all
+  using (auth.uid() = user_id);
+```
+
+**Schema of `settings` JSONB column:**
+```json
+{
+  "defaultDepth": "normal",
+  "autosave":     false,
+  "tts":          true,
+  "reminder":     false,
+  "theme":        "dark",
+  "accent":       "indigo",
+  "font":         "humanist",
+  "card":         "elevated",
+  "radius":       "rounded"
+}
+```
+
+**Seed defaults for existing users** (run once in SQL Editor):
+```sql
+insert into user_settings (user_id, settings, updated_at)
+select id,
+  '{"defaultDepth":"normal","autosave":false,"tts":true,"reminder":false,
+    "theme":"dark","accent":"indigo","font":"humanist","card":"elevated","radius":"rounded"}'::jsonb,
+  now()
+from auth.users
+on conflict (user_id) do nothing;
+```
+
+**Frontend usage** (account.html inline JS — direct Supabase client, no backend required):
+```js
+// Read
+_supabase.auth.setSession({ access_token: getToken(), refresh_token: getRefresh() })
+  .then(() => _supabase.from('user_settings').select('settings').single())
+  .then(({ data }) => { if (data) applySettings(data.settings); });
+
+// Write (Save button)
+_supabase.auth.setSession(...)
+  .then(({ data }) => _supabase.from('user_settings')
+    .upsert({ user_id: data.session.user.id, settings, updated_at: new Date().toISOString() },
+            { onConflict: 'user_id' }));
+```
+
+---
+
+## UI conventions
+
+### Brand / home navigation
+`.side-brand` (sidebar) and `.topbar .brand` are both `<a href="/">` links — clicking the Explainly logo or name on any app page returns to the homepage. Do **not** change these to `<div>` or point them at an app page.
+
+### `.side-account` email overflow
+`.side-account .who span` (the email row) has `display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis` — required because long email addresses break the sidebar layout. Do not remove these.
 
 ---
 

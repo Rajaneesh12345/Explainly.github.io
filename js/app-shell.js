@@ -9,7 +9,7 @@
   var tweaks = loadTweaks();
 
   function loadTweaks() {
-    var def = { theme: 'dark', accent: 'indigo', font: 'techy', card: 'elevated', radius: 'rounded' };
+    var def = { theme: 'dark', accent: 'indigo', font: 'humanist', card: 'elevated', radius: 'rounded' };
     var saved = {};
     try { saved = JSON.parse(localStorage.getItem(TWEAK_STORE) || '{}'); } catch (e) {}
     return Object.assign({}, def, saved);
